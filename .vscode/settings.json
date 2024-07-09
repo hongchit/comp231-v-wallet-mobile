@@ -2,7 +2,6 @@
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit"
   },
-  "eslint.packageManager": "npm",
   "eslint.validate": [
     "javascript",
     "javascriptreact",
