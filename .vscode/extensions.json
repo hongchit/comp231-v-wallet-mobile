@@ -1,5 +1,8 @@
 {
-    "recommendations": [
-        "ionic.ionic"
-    ]
+  "recommendations": [
+    "ionic.ionic",
+    "dbaeumer.vscode-eslint",
+    "formulahendry.auto-rename-tag",
+    "styled-components.vscode-styled-components"
+  ]
 }
