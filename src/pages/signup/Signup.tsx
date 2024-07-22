@@ -1,18 +1,59 @@
 import React, { useState } from 'react';
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonInput, IonItem, IonLabel, IonButton } from '@ionic/react';
+import { IonPage, IonHeader, IonToolbar, IonTitle } from '@ionic/react';
+import SignUpForm from '../../components/SignForm';
+import { useHistory } from 'react-router';
 
 const SignUp: React.FC = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const history = useHistory();
+  const [profilePicture, setProfilePicture] = useState<File | null>(null);
 
-  const handleSignUp = () => {
+  const handleSignUp = (
+    firstName: string,
+    lastName: string,
+    email: string,
+    phoneNumber: string,
+    username: string,
+    password: string,
+    confirmPassword: string,
+    dateOfBirth: string,
+    gender: string,
+    address: string,
+    termsAccepted: boolean,
+  ) => {
     if (password !== confirmPassword) {
       alert('Passwords do not match!');
       return;
     }
+
+    if (!termsAccepted) {
+      alert('You must accept the terms and conditions!');
+      return;
+    }
+
     // Handle sign-up logic here, typically involves calling an API
-    console.log('Sign-Up:', { email, password });
+    console.log('Sign-Up:', {
+      firstName,
+      lastName,
+      email,
+      phoneNumber,
+      username,
+      password,
+      dateOfBirth,
+      gender,
+      address,
+      profilePicture,
+      termsAccepted,
+    });
+
+    history.push('/folder/Inbox');
+  };
+
+  const handleProfilePictureChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    if (event.target.files && event.target.files[0]) {
+      setProfilePicture(event.target.files[0]);
+    }
   };
 
   return (
@@ -22,21 +63,10 @@ const SignUp: React.FC = () => {
           <IonTitle>Sign Up</IonTitle>
         </IonToolbar>
       </IonHeader>
-      <IonContent>
-        <IonItem>
-          <IonLabel position="floating">Email</IonLabel>
-          <IonInput type="email" value={email} onIonChange={(e) => setEmail(e.detail.value!)}></IonInput>
-        </IonItem>
-        <IonItem>
-          <IonLabel position="floating">Password</IonLabel>
-          <IonInput type="password" value={password} onIonChange={(e) => setPassword(e.detail.value!)}></IonInput>
-        </IonItem>
-        <IonItem>
-          <IonLabel position="floating">Confirm Password</IonLabel>
-          <IonInput type="password" value={confirmPassword} onIonChange={(e) => setConfirmPassword(e.detail.value!)}></IonInput>
-        </IonItem>
-        <IonButton expand="full" onClick={handleSignUp}>Sign Up</IonButton>
-      </IonContent>
+      <SignUpForm
+        handleProfilePictureChange={handleProfilePictureChange}
+        handleSignUp={handleSignUp}
+      />
     </IonPage>
   );
 };
