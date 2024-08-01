@@ -1,0 +1,7 @@
+{
+  "name": "comp231-v-wallet-mobile",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react-vite"
+}
