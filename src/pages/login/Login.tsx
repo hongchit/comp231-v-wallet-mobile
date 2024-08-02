@@ -9,39 +9,45 @@ import {
   IonItem,
   IonLabel,
   IonButton,
+  IonText,
 } from '@ionic/react';
 import { useHistory } from 'react-router-dom';
-import accountsApi from '../../hooks/accounts.api';
+import authApi from '../../hooks/auth.api';
+import AuthHelper from '../../hooks/AuthHelper';
+import { pad } from 'lodash';
+import { text } from 'ionicons/icons';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const history = useHistory();
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleLogin = async () => {
+    if (!email || !password) {
+      setErrorMessage('Please enter email and password.');
+      return;
+    }
     try {
-      const response = await accountsApi().login(email, password);
+      // Process Login
+      const token = await authApi().login(email, password);
 
-      if (response.ok) {
-        const data = await response.json();
-
-        if (data.token) {
-          // Optionally, store the token in localStorage or context
-          // localStorage.setItem('token', data.token);
-          
-          history.push('/dashboard');
-        } else {
-          alert('Login failed. Please check your credentials.');
-        }
-      } else {
-        console.error('Login failed with status:', response.status);
+      if (!token) {
+        // Login failed
         alert('Login failed. Please check your credentials.');
+        setErrorMessage('Login failed. Please check your credentials.');
+        return;
       }
+      // Login successful. Save session token and redirect to dashboard
+      AuthHelper().authenticate(token, () => {
+        history.push('/dashboard');
+      });
     } catch (error) {
       console.error('Login error:', error);
-      alert('An error occurred during login. Please try again.');
+      alert('An error occurred during login. Please try again later.');
     }
   };
+
   return (
     <IonPage>
       <IonHeader>
@@ -50,6 +56,11 @@ const Login: React.FC = () => {
         </IonToolbar>
       </IonHeader>
       <IonContent>
+        {errorMessage && (
+          <div className="ion-padding ion-text-center">
+            <IonText color="danger">{errorMessage}</IonText>
+          </div>
+        )}
         <IonItem>
           <IonLabel position="floating">Email</IonLabel>
           <IonInput
