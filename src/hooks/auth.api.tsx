@@ -22,8 +22,8 @@ export const authApi = () => {
         token = await response.json();
         console.log(token);
       } catch (error) {
-        console.error('Failed to parse response body:', error);
-        throw new Error('Failed to parse response body');
+        console.error('Failed to parse response body:', response);
+        throw error;
       }
 
       return token;
