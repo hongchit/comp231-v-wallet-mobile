@@ -11,9 +11,11 @@ export const accountsApi = () => {
         body: JSON.stringify({ email, password }),
       });
 
-      return await response.json();
+      //return await response.json();
+      return response;
     } catch (error) {
       console.error('Failed to call login:', error);
+      throw error;
     }
   };
 

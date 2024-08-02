@@ -10,18 +10,38 @@ import {
   IonLabel,
   IonButton,
 } from '@ionic/react';
-
+import { useHistory } from 'react-router-dom';
 import accountsApi from '../../hooks/accounts.api';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const history = useHistory();
 
   const handleLogin = async () => {
-    const test = await accountsApi().login(email, password);
-    debugger;
-  };
+    try {
+      const response = await accountsApi().login(email, password);
 
+      if (response.ok) {
+        const data = await response.json();
+
+        if (data.token) {
+          // Optionally, store the token in localStorage or context
+          // localStorage.setItem('token', data.token);
+          
+          history.push('/dashboard');
+        } else {
+          alert('Login failed. Please check your credentials.');
+        }
+      } else {
+        console.error('Login failed with status:', response.status);
+        alert('Login failed. Please check your credentials.');
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      alert('An error occurred during login. Please try again.');
+    }
+  };
   return (
     <IonPage>
       <IonHeader>

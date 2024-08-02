@@ -11,6 +11,7 @@ import Menu from './components/Menu';
 import Page from './pages/Page';
 import Login from './pages/login/Login'; // Import the Login component
 import SignUp from './pages/signup/Signup';
+import Dashboard from './pages/dashboard/Dashboard'; // import the dashboard component
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -86,6 +87,8 @@ const App: React.FC = () => {
             </Route>
             <Route path="/login" component={Login} exact={true} />
             <Route path="/signup" component={SignUp} exact={true} />
+            <Route path="/dashboard" component={Dashboard}/>
+            <Route exact path="/" component={Login}/>
           </IonRouterOutlet>
         </IonSplitPane>
       </IonReactRouter>
