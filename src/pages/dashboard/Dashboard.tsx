@@ -51,7 +51,7 @@ const Dashboard: React.FC = () => {
       // cancel the fetch on component unmount
       abortController.abort();
     };
-  }, [history]);
+  }, [history, accounts]);
 
   return (
     <IonPage>
