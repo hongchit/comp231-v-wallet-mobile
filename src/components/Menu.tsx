@@ -30,6 +30,7 @@ import {
   warningSharp,
 } from 'ionicons/icons';
 import './Menu.css';
+import AuthHelper from '../hooks/AuthHelper';
 
 interface AppPage {
   url: string;
@@ -84,8 +85,10 @@ const Menu: React.FC = () => {
   const history = useHistory();
 
   const handleLogout = () => {
-    menuController.close;
-    history.push('/signup');
+    AuthHelper().logout(() => {
+      menuController.close;
+      history.push('/signup');
+    });
   };
 
   return (
