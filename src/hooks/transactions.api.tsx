@@ -2,14 +2,14 @@ import e from 'express';
 import { config } from '../config/config';
 
 export const transactionsApi = () => {
-  let restApiUrlBase = config.restApiBase + '/api/Finance';
+  let restApiUrlBase = config.restApiBase + '/api/finance';
 
   const list = async (
     accountId: string,
     token: string,
     signal: AbortSignal | null | undefined,
   ) => {
-    return fetch(restApiUrlBase + '/' + accountId + '/transactions', {
+    return fetch(restApiUrlBase + '/Transaction/by_account/' + accountId, {
       method: 'GET',
       signal: signal,
       headers: {

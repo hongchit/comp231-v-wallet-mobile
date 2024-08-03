@@ -1,7 +1,7 @@
 import { config } from '../config/config';
 
 export const authApi = () => {
-  let url = config.restApiBase + '/account';
+  let url = config.restApiBase + '/User';
 
   const login = async (email: string, password: string) => {
     try {
