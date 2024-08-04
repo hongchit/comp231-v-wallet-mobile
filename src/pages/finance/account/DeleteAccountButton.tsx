@@ -11,9 +11,7 @@ interface DeleteAccountButtonProps {
   redirectURI: string;
 }
 
-export default function DeleteAccountButton(
-  props: DeleteAccountButtonProps,
-): JSX.Element | null {
+const DeleteAccountButton: React.FC<DeleteAccountButtonProps> = (props) => {
   const [open, setOpen] = useState(false);
   const [redirect, setRedirect] = useState(false);
   const [token, setToken] = useToken();
@@ -78,4 +76,6 @@ export default function DeleteAccountButton(
       />
     </div>
   );
-}
+};
+
+export default DeleteAccountButton;
