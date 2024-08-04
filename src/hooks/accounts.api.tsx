@@ -157,7 +157,7 @@ export const accountsApi = () => {
       if (response.status === 403) {
         throw new Error('Unauthorized');
       } else if (response.status === 404) {
-        throw new Error(`Account not found: ${account.id}`);
+        throw new Error(`Account not found: ${id}`);
       } else if (response.status !== 204) {
         throw new Error('Failed to delete account: ' + response);
       }
