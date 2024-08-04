@@ -16,6 +16,10 @@ import accountsApi from '../../hooks/accounts.api';
 
 interface Account {
   accountName: string;
+  accountNumber: string;
+  currentValue: number;
+  accountType: string;
+  currency: string;
 }
 
 const Dashboard: React.FC = () => {
@@ -68,6 +72,10 @@ const Dashboard: React.FC = () => {
             <IonItem key={index}>
               <IonLabel>
                 <h2>{account.accountName}</h2>
+                <p>Account Number: {account.accountNumber}</p>
+                <p>Current Value: {account.currentValue}</p>
+                <p>Account Type: {account.accountType}</p>
+                <p>Currency: {account.currency}</p>
               </IonLabel>
             </IonItem>
           ))}
