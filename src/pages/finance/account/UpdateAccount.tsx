@@ -11,19 +11,23 @@ import { FinancialAccount } from '../../../models/FinancialAccount';
 import accountsApi from '../../../hooks/accounts.api';
 import { useToken } from '../../../hooks/useToken';
 import { useUser } from '../../../hooks/useUser';
+import AccountType from '../../../models/AccountType';
+import Currency from '../../../models/Currency';
 
 const UpdateAccount: React.FC = () => {
+  const { accountId } = useParams<{ accountId: string }>();
+  const { returnURI } = useParams<{ returnURI: string }>();
+
   const [token, setToken] = useToken();
   const user = useUser();
   const history = useHistory();
 
-  const { accountId } = useParams<{ accountId: string }>();
   const [account, setAccount] = useState<FinancialAccount | null>(null);
   const [accountName, setAccountName] = useState('');
   const [initialValue, setInitialValue] = useState(0);
   const [currentValue, setCurrentValue] = useState(0);
-  const [accountType, setAccountType] = useState('');
-  const [currency, setCurrency] = useState('');
+  const [accountType, setAccountType] = useState(AccountType.CASH);
+  const [currency, setCurrency] = useState(Currency.CAD);
 
   if (!token) {
     history.push('/login');
@@ -55,6 +59,13 @@ const UpdateAccount: React.FC = () => {
 
   const handleUpdateAccount = async () => {
     try {
+      if (!account) {
+        return;
+      }
+      if (!accountName || !accountType || !currency) {
+        alert('Please fill in all required fields');
+        return;
+      }
       const updatedAccount: FinancialAccount = {
         id: accountId,
         accountName,
@@ -65,12 +76,10 @@ const UpdateAccount: React.FC = () => {
         userAccountId: account?.userAccountId || user.primarysid,
       };
 
-      const token = ''; // Add your authentication token here
       const signal = new AbortController().signal;
       await accountsApi().update(updatedAccount, token, signal);
 
-      // Handle successful update, e.g., show a success message or navigate to another page
-      alert('Account updated successfully');
+      history.push(returnURI);
     } catch (error) {
       console.error('Failed to update account:', error);
       alert('Failed to update account');
@@ -103,27 +112,45 @@ const UpdateAccount: React.FC = () => {
               onIonChange={(e) => setAccountName(e.detail.value!)}
             ></IonInput>
             <IonInput
-              type="number"
+              readonly
               value={initialValue}
               placeholder="Initial Value"
-              onIonChange={(e) => setInitialValue(parseFloat(e.detail.value!))}
+              // onIonChange={(e) => setInitialValue(parseFloat(e.detail.value!))}
             ></IonInput>
             <IonInput
-              type="number"
+              readonly
               value={currentValue}
               placeholder="Current Value"
-              onIonChange={(e) => setCurrentValue(parseFloat(e.detail.value!))}
+              // onIonChange={(e) => setCurrentValue(parseFloat(e.detail.value!))}
             ></IonInput>
-            <IonInput
-              value={accountType}
-              placeholder="Account Type"
-              onIonChange={(e) => setAccountType(e.detail.value!)}
-            ></IonInput>
-            <IonInput
-              value={currency}
-              placeholder="Currency"
-              onIonChange={(e) => setCurrency(e.detail.value!)}
-            ></IonInput>
+            <div>
+              <label>Account Type:</label>
+              {Object.values(AccountType).map((type) => (
+                <div key={type}>
+                  <input
+                    type="radio"
+                    value={type}
+                    checked={accountType === type}
+                    onChange={() => setAccountType(type)}
+                  />
+                  <label>{type}</label>
+                </div>
+              ))}
+            </div>
+            <div>
+              <label>Currency:</label>
+              {Object.values(Currency).map((currency) => (
+                <div key={currency}>
+                  <input
+                    type="radio"
+                    value={currency}
+                    checked={currency === currency}
+                    onChange={() => setCurrency(currency)}
+                  />
+                  <label>{currency}</label>
+                </div>
+              ))}
+            </div>
             <IonButton type="submit">Update Account</IonButton>
             <IonButton type="button" onClick={handleCancel}>
               Cancel
