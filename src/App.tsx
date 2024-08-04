@@ -9,7 +9,7 @@ import { IonReactRouter } from '@ionic/react-router';
 import { Redirect, Route, useHistory } from 'react-router-dom';
 import Menu from './components/Menu';
 import Page from './pages/Page';
-import Login from './pages/login/Login'; // Import the Login component
+import Login from './pages/login/Login';
 import SignUp from './pages/signup/Signup';
 
 /* Core CSS required for Ionic components to work properly */
@@ -29,13 +29,27 @@ import '@ionic/react/css/display.css';
 /* Theme variables */
 import './theme/variables.css';
 
+import authHelper from './helpers/auth.helper';
+import Dashboard from './pages/dashboard/Dashboard';
+import { setGlobalState, useGlobalState } from './global/global.state';
+
 setupIonicReact();
 
 const App: React.FC = () => {
   const [idleTime, setIdleTime] = useState(0);
   const history = useHistory();
+  const [userPresence] = useGlobalState('userPresence');
+
+  const initializeGlobalState = async () => {
+    const userPresence = await authHelper.getAuthenticatedUser();
+    if (userPresence) {
+      setGlobalState('userPresence', userPresence);
+    }
+  };
 
   useEffect(() => {
+    initializeGlobalState();
+
     const maxIdleTime = 15 * 60 * 1000; // 15 minutes in milliseconds
     let timer: NodeJS.Timeout;
 
@@ -76,14 +90,18 @@ const App: React.FC = () => {
     <IonApp>
       <IonReactRouter>
         <IonSplitPane contentId="main">
-          <Menu />
+          {userPresence.token === '' ? null : <Menu />}
           <IonRouterOutlet id="main">
             <Route path="/" exact={true}>
-              <Redirect to="/folder/Inbox" />
+              {authHelper.isAuthenticated() ? (
+                <Page name="Dashboard">
+                  <Dashboard />
+                </Page>
+              ) : (
+                <Login />
+              )}
             </Route>
-            <Route path="/folder/:name" exact={true}>
-              <Page />
-            </Route>
+            <Route path="/dashboard" component={Dashboard} exact={true} />
             <Route path="/login" component={Login} exact={true} />
             <Route path="/signup" component={SignUp} exact={true} />
           </IonRouterOutlet>
