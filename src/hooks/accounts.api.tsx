@@ -1,7 +1,7 @@
 import { config } from '../config/config';
 
 export const accountsApi = () => {
-  let restApiUrlBase = config.restApiBase + '/api/finance/Account';
+  let restApiUrlBase = config.restApiBase + '/finance/Account';
 
   const list = async (
     token: string,

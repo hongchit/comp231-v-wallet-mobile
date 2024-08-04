@@ -30,7 +30,7 @@ import {
   warningSharp,
 } from 'ionicons/icons';
 import './Menu.css';
-import AuthHelper from '../hooks/AuthHelper';
+import { useToken } from '../hooks/useToken';
 
 interface AppPage {
   url: string;
@@ -83,12 +83,12 @@ const labels = ['Family', 'Friends', 'Notes', 'Work', 'Travel', 'Reminders'];
 const Menu: React.FC = () => {
   const location = useLocation();
   const history = useHistory();
+  const [token, setToken] = useToken();
 
   const handleLogout = () => {
-    AuthHelper().logout(() => {
-      menuController.close;
-      history.push('/signup');
-    });
+    setToken('');
+    menuController.close;
+    history.push('/login');
   };
 
   return (
