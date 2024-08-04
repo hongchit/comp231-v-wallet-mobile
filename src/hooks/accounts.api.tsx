@@ -70,6 +70,12 @@ export const accountsApi = () => {
     token: string,
     signal: AbortSignal,
   ) => {
+    if (!account) {
+      throw new Error('Invalid account');
+    }
+    if (!account.userAccountId) {
+      throw new Error('Missing userAccountId');
+    }
     try {
       const response = await fetch(restApiUrlBase, {
         method: 'POST',
@@ -95,8 +101,80 @@ export const accountsApi = () => {
     }
   };
 
+  const update = async (
+    account: FinancialAccount,
+    token: string,
+    signal: AbortSignal,
+  ) => {
+    if (!account) {
+      throw new Error('Invalid account');
+    }
+    if (!account.id) {
+      throw new Error('Missing ID');
+    }
+    if (!account.userAccountId) {
+      throw new Error('Missing userAccountId');
+    }
+    try {
+      const response = await fetch(restApiUrlBase + '/' + account.id, {
+        method: 'PUT',
+        signal: signal,
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(account),
+      });
+
+      if (response.status === 403) {
+        throw new Error('Unauthorized');
+      } else if (response.status === 404) {
+        throw new Error(`Account not found: ${account.id}`);
+      } else if (response.status !== 200) {
+        throw new Error('Failed to update account: ' + response);
+      }
+
+      return response.json();
+    } catch (error) {
+      console.error('Failed API on update account:', error);
+      throw error;
+    }
+  };
+
+  const remove = async (id: string, token: string, signal: AbortSignal) => {
+    try {
+      const response = await fetch(restApiUrlBase + '/' + id, {
+        method: 'DELETE',
+        signal: signal,
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.status === 403) {
+        throw new Error('Unauthorized');
+      } else if (response.status === 404) {
+        throw new Error(`Account not found: ${account.id}`);
+      } else if (response.status !== 204) {
+        throw new Error('Failed to delete account: ' + response);
+      }
+
+      return response.json();
+    } catch (error) {
+      console.error('Failed API on delete account:', error);
+      throw error;
+    }
+  };
+
   return {
     list,
+    get,
+    create,
+    update,
+    remove,
   };
 };
 
