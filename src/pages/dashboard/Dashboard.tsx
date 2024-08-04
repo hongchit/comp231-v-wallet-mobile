@@ -11,8 +11,9 @@ import {
   IonLoading,
 } from '@ionic/react';
 import { useHistory } from 'react-router-dom';
-import AuthHelper from '../../hooks/AuthHelper';
 import accountsApi from '../../hooks/accounts.api';
+import { useToken } from '../../hooks/useToken';
+import { useUser } from '../../hooks/useUser';
 
 interface Account {
   accountName: string;
@@ -25,10 +26,13 @@ interface Account {
 const Dashboard: React.FC = () => {
   const history = useHistory();
   const [accounts, setAccounts] = useState<Account[]>([]);
+  const [token, setToken] = useToken();
+  const user = useUser();
+
   // there are still some errors for fetching finance account information.
   useEffect(() => {
-    const token = AuthHelper().isAuthenticated();
-    console.log('Token:', token);
+    console.log('Dashboard Token:', token);
+    console.log('Dashboard User:', user);
     if (!token) {
       // Redirect to login page if JWT session token is not found
       history.push('/login');
@@ -46,6 +50,7 @@ const Dashboard: React.FC = () => {
       .catch((error) => {
         console.error('Error fetching accounts:', error);
         if (error.message === 'Unauthorized') {
+          console.log('Unauthorized');
           // Redirect to login page if token is invalid
           history.push('/login');
         }
@@ -55,7 +60,7 @@ const Dashboard: React.FC = () => {
       // cancel the fetch on component unmount
       abortController.abort();
     };
-  }, [history]);
+  }, [history, token, user]);
 
   return (
     <IonPage>

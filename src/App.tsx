@@ -29,6 +29,7 @@ import '@ionic/react/css/display.css';
 
 /* Theme variables */
 import './theme/variables.css';
+import { PrivateRoute } from './components/PrivateRoute';
 
 setupIonicReact();
 
@@ -82,13 +83,13 @@ const App: React.FC = () => {
             <Route path="/" exact={true}>
               <Redirect to="/folder/Inbox" />
             </Route>
-            <Route path="/folder/:name" exact={true}>
+            <PrivateRoute path="/folder/:name" exact={true}>
               <Page />
-            </Route>
+            </PrivateRoute>
             <Route path="/login" component={Login} exact={true} />
             <Route path="/signup" component={SignUp} exact={true} />
-            <Route path="/dashboard" component={Dashboard}/>
-            <Route exact path="/" component={Login}/>
+            <PrivateRoute path="/dashboard" component={Dashboard} />
+            <Route exact path="/" component={Login} />
           </IonRouterOutlet>
         </IonSplitPane>
       </IonReactRouter>

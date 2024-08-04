@@ -13,15 +13,16 @@ import {
 } from '@ionic/react';
 import { useHistory } from 'react-router-dom';
 import authApi from '../../hooks/auth.api';
-import AuthHelper from '../../hooks/AuthHelper';
-import { pad } from 'lodash';
-import { text } from 'ionicons/icons';
+import { useToken } from '../../hooks/useToken';
+import { useUser } from '../../hooks/useUser';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const history = useHistory();
   const [errorMessage, setErrorMessage] = useState('');
+  const [token, setToken] = useToken();
+  const user = useUser();
 
   const handleLogin = async () => {
     if (!email || !password) {
@@ -30,18 +31,20 @@ const Login: React.FC = () => {
     }
     try {
       // Process Login
-      const token = await authApi().login(email, password);
+      const newToken = await authApi().login(email, password);
+      console.log('Login response:', newToken);
 
-      if (!token) {
+      if (!newToken || !newToken.token) {
         // Login failed
         alert('Login failed. Please check your credentials.');
         setErrorMessage('Login failed. Please check your credentials.');
         return;
       }
       // Login successful. Save session token and redirect to dashboard
-      AuthHelper().authenticate(token, () => {
-        history.push('/dashboard');
-      });
+      setToken(newToken.token);
+      console.log('go...');
+      history.push('/dashboard');
+      return;
     } catch (error) {
       console.error('Login error:', error);
       alert('An error occurred during login. Please try again later.');
