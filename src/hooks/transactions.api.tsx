@@ -7,29 +7,33 @@ export const transactionsApi = () => {
   const list = async (
     accountId: string,
     token: string,
-    signal: AbortSignal | null | undefined,
+    signal: AbortSignal,
   ) => {
-    return fetch(restApiUrlBase + '/Transaction/by_account/' + accountId, {
-      method: 'GET',
-      signal: signal,
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((response) => {
-        if (response.status === 403) {
-          throw new Error('Unauthorized');
-        } else if (response.status !== 200) {
-          throw new Error('Failed to fetch transactions: ' + response);
-        }
-        return response.json();
-      })
-      .catch((error) => {
-        console.error('Failed API on list transactions:', error);
-        throw error;
-      });
+    try {
+      const response = await fetch(
+        restApiUrlBase + '/Transaction/by_account/' + accountId,
+        {
+          method: 'GET',
+          signal: signal,
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      if (response.status === 403) {
+        throw new Error('Unauthorized');
+      } else if (response.status !== 200) {
+        throw new Error('Failed to fetch transactions: ' + response);
+      }
+
+      return response.json();
+    } catch (error) {
+      console.error('Failed API on list transactions:', error);
+      throw error;
+    }
   };
 
   return {

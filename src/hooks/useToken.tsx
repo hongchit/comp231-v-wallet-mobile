@@ -9,19 +9,20 @@ export const useToken = (): [string | null, (newToken: string) => void] => {
     return null;
   });
 
-  const setToken = (newToken: string) => {
+  const setToken = async (newToken: string) => {
     if (typeof window !== 'undefined') {
       sessionStorage.setItem('jwt', newToken);
       setTokenInternal(newToken);
       if (!newToken) {
         console.log('Logging out');
-        authApi()
-          .logout()
-          .then((data: any) => {
-            console.log(data.message);
-            document.cookie =
-              't=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-          });
+        try {
+          const data = await authApi().logout();
+          console.log(data.message);
+          document.cookie =
+            't=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+        } catch (error) {
+          console.error(error);
+        }
       }
     }
   };
