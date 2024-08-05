@@ -67,6 +67,9 @@ const Dashboard: React.FC = () => {
       }
       const service = dashboardService(userPresence);
       await service.createFinancialTransaction(transaction);
+
+      await fetchFinancialAccounts();
+      await fetchFinancialTransactions();
     } catch (error) {
       console.log(error);
     }
@@ -155,13 +158,10 @@ const Dashboard: React.FC = () => {
           accounts={financialAccountData}
           onClose={(newTransaction, isConfirm) => {
             setIsTransactionModalOpen(false);
-            if (!isConfirm) {
+            if (isConfirm) {
+              createNewTransaction(newTransaction);
               return;
             }
-            createNewTransaction(newTransaction);
-
-            fetchFinancialAccounts();
-            fetchFinancialTransactions();
           }}
         />
       </>
