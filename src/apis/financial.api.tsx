@@ -33,9 +33,38 @@ export const financialAccountApi = (userPresence: any) => {
     return await response.json();
   };
 
+  const createTransaction = async (transaction: any) => {
+    var newTransaction = {
+      id: '',
+      amount: transaction.amount,
+      description: transaction.description,
+      transactionInformation: transaction.type,
+      categoryName: transaction.categoryName,
+      accountId: transaction.accountId,
+      accountName: transaction.accountName,
+      transactionDate: transaction.date,
+    };
+
+    let response = await fetch(`${url}/transaction`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `${userPresence.token}`,
+      },
+      body: JSON.stringify(newTransaction),
+    });
+
+    if (!response.ok) {
+      throw new Error(await response.text());
+    }
+
+    return await response.json();
+  };
+
   return {
     getAccounts,
     getFinancialTransactions,
+    createTransaction,
   };
 };
 

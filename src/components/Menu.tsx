@@ -60,7 +60,6 @@ const Menu: React.FC = () => {
                   detail={false}
                 >
                   <IonIcon
-                    aria-hidden="true"
                     slot="start"
                     ios={appPage.iosIcon}
                     md={appPage.mdIcon}
@@ -74,7 +73,7 @@ const Menu: React.FC = () => {
 
         <IonList id="other-list">
           <IonItem lines="none">
-            <IonIcon aria-hidden="true" slot="start" icon={logOut} />
+            <IonIcon slot="start" icon={logOut} />
             <IonButton
               fill="clear"
               className="logout-button"

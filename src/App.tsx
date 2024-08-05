@@ -93,7 +93,7 @@ const App: React.FC = () => {
           {userPresence.token === '' ? null : <Menu />}
           <IonRouterOutlet id="main">
             <Route path="/" exact={true}>
-              {authHelper.isAuthenticated() ? (
+              {userPresence && authHelper.isAuthenticated() ? (
                 <Page name="Dashboard">
                   <Dashboard />
                 </Page>

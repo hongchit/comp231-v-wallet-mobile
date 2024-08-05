@@ -16,20 +16,19 @@ import {
   IonFab,
   IonFabButton,
   IonIcon,
+  IonButton,
 } from '@ionic/react';
 import { FinancialAccount } from '../../models/financial-account.model';
 import { FinancialTransaction } from '../../models/financial-transaction.model';
 import { add } from 'ionicons/icons';
-import Transaction from '../finance/Transaction';
-
-var financialAccounts: FinancialAccount[] = [];
+import NewTransactionModal from '../finance/NewTransactionModal';
 
 const Dashboard: React.FC = () => {
   const [userPresence] = useGlobalState('userPresence');
   const [financialAccountData, setFinancialAccounts] = useState<
-    FinancialAccount[] | null
-  >(null);
-  const [financialTransactions, setFinancialTransactions] = useState<
+    FinancialAccount[] | []
+  >([]);
+  const [financialTransactionsData, setFinancialTransactions] = useState<
     FinancialTransaction[]
   >([]);
 
@@ -40,7 +39,7 @@ const Dashboard: React.FC = () => {
       }
 
       const service = dashboardService(userPresence);
-      financialAccounts = await service.getFinancialAccounts();
+      var financialAccounts = await service.getFinancialAccounts();
       setFinancialAccounts(financialAccounts);
     } catch (error) {
       console.log(error);
@@ -49,15 +48,25 @@ const Dashboard: React.FC = () => {
 
   const fetchFinancialTransactions = async () => {
     try {
-      if (
-        !userPresence.profileId ||
-        (financialAccountData && financialAccountData.length === 0)
-      ) {
+      if (!userPresence.profileId) {
         return;
       }
 
       const service = dashboardService(userPresence);
-      const transactions = await service.getFinancialTransactions();
+      var financialTransactions = await service.getFinancialTransactions();
+      setFinancialTransactions(financialTransactions);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const createNewTransaction = async (transaction: FinancialTransaction) => {
+    try {
+      if (!userPresence.profileId) {
+        return;
+      }
+      const service = dashboardService(userPresence);
+      await service.createFinancialTransaction(transaction);
     } catch (error) {
       console.log(error);
     }
@@ -73,6 +82,10 @@ const Dashboard: React.FC = () => {
     setIsTransactionModalOpen(true);
   };
 
+  const addAccountClick = () => {
+    //add the logic to add financial account here
+  };
+
   return (
     <>
       <IonGrid>
@@ -80,6 +93,9 @@ const Dashboard: React.FC = () => {
           <IonCol>
             <IonItemDivider>
               <IonLabel>Accounts</IonLabel>
+              <IonButton shape="round" onClick={addAccountClick}>
+                <IonIcon slot="icon-only" icon={add}></IonIcon>
+              </IonButton>
             </IonItemDivider>
           </IonCol>
         </IonRow>
@@ -109,16 +125,16 @@ const Dashboard: React.FC = () => {
               </IonCardHeader>
               <IonItemDivider />
               <IonList lines="full">
-                {financialTransactions.length === 0 ? (
+                {financialTransactionsData.length === 0 ? (
                   <IonItem>
                     <IonLabel>No records found</IonLabel>
                   </IonItem>
                 ) : (
-                  financialTransactions.map((data, index) => {
+                  financialTransactionsData.map((data, index) => {
                     return (
                       <IonItem key={index}>
                         <IonLabel>{data.categoryName}</IonLabel>
-                        <IonLabel>{data.amount}</IonLabel>
+                        <IonLabel>$ {data.amount.toFixed(2)}</IonLabel>
                       </IonItem>
                     );
                   })
@@ -134,13 +150,16 @@ const Dashboard: React.FC = () => {
             <IonIcon icon={add}></IonIcon>
           </IonFabButton>
         </IonFab>
-        <Transaction
+        <NewTransactionModal
           isOpen={isTransactionModalOpen}
-          onClose={(data) => {
-            var test = data;
-            debugger;
-            //call the save transaction here jc
+          accounts={financialAccountData}
+          onClose={(newTransaction, isConfirm) => {
             setIsTransactionModalOpen(false);
+            if (!isConfirm) {
+              return;
+            }
+            createNewTransaction(newTransaction);
+
             fetchFinancialAccounts();
             fetchFinancialTransactions();
           }}

@@ -23,23 +23,34 @@ export const dashboardService = (userPresence: any) => {
         userPresence,
       ).getFinancialTransactions(userPresence.profileId);
       return financialTransactions.map((transaction: any) => ({
-        id: transaction.Id,
-        amount: transaction.Amount,
-        description: transaction.Description,
-        type: transaction.TransactionInformation,
-        date: transaction.TransactionDate,
-        accountId: transaction.AccountId,
-        accountName: transaction.AccountName,
-        categoryName: transaction.CategoryName,
-      }));
+        id: transaction.id,
+        amount: transaction.amount,
+        description: transaction.description,
+        type: transaction.transactionInformation,
+        date: transaction.transactionDate,
+        accountId: transaction.accountId,
+        accountName: transaction.accountName,
+        categoryName: transaction.categoryName,
+      })) as FinancialTransaction[];
     } catch (err) {
       console.log(err);
       return [];
     }
   };
 
+  const createFinancialTransaction = async (
+    transaction: FinancialTransaction,
+  ) => {
+    try {
+      await financialAccountApi(userPresence).createTransaction(transaction);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return {
     getFinancialAccounts,
     getFinancialTransactions,
+    createFinancialTransaction,
   };
 };
