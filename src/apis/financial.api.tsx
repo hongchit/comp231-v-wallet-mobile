@@ -6,7 +6,23 @@ export const financialAccountApi = (userPresence: any) => {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${userPresence.token}`,
+        Authorization: `${userPresence.token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(await response.text());
+    }
+
+    return await response.json();
+  };
+
+  const getFinancialTransactions = async (userProfileId: string) => {
+    let response = await fetch(`${url}/${userProfileId}/transaction`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `${userPresence.token}`,
       },
     });
 
@@ -19,6 +35,7 @@ export const financialAccountApi = (userPresence: any) => {
 
   return {
     getAccounts,
+    getFinancialTransactions,
   };
 };
 
