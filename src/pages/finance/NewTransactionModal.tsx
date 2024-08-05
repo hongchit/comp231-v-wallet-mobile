@@ -56,7 +56,7 @@ const TransactionModal: React.FC<TransactionModalProperties> = ({
             <IonButtons slot="start">
               <IonButton onClick={() => onModalClose(false)}>Cancel</IonButton>
             </IonButtons>
-            <IonTitle>Welcome</IonTitle>
+            <IonTitle>New Transaction</IonTitle>
             <IonButtons slot="end">
               <IonButton strong={true} onClick={() => onModalClose(true)}>
                 Accept
