@@ -2,6 +2,7 @@ import { IonButtons, IonContent, IonHeader, IonMenuButton, IonPage, IonTitle, Io
 import { useParams } from 'react-router';
 import ExploreContainer from '../components/ExploreContainer';
 import './Page.css';
+import Account from './account/Account';
 
 const Page: React.FC = () => {
 
@@ -24,6 +25,7 @@ const Page: React.FC = () => {
             <IonTitle size="large">{name}</IonTitle>
           </IonToolbar>
         </IonHeader>
+        {name === 'Accounts' && <Account />}
         <ExploreContainer name={name} />
       </IonContent>
     </IonPage>

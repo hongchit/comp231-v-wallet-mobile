@@ -17,6 +17,8 @@ import {
   archiveOutline,
   archiveSharp,
   bookmarkOutline,
+  documentOutline,
+  documentSharp,
   heartOutline,
   heartSharp,
   logOut,
@@ -76,6 +78,12 @@ const appPages: AppPage[] = [
     iosIcon: warningOutline,
     mdIcon: warningSharp,
   },
+  {
+    title: 'Accounts',
+    url: '/folder/Accounts',
+    iosIcon: documentOutline,
+    mdIcon: documentSharp,
+  },
 ];
 
 const labels = ['Family', 'Friends', 'Notes', 'Work', 'Travel', 'Reminders'];
@@ -88,7 +96,7 @@ const Menu: React.FC = () => {
   const handleLogout = () => {
     setToken('');
     menuController.close;
-    history.push('/login');
+ //   history.push('/login');
   };
 
   return (
