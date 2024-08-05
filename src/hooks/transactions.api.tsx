@@ -1,0 +1,44 @@
+import e from 'express';
+import { config } from '../config/config';
+
+export const transactionsApi = () => {
+  let restApiUrlBase = config.restApiBase + '/api/finance';
+
+  const list = async (
+    accountId: string,
+    token: string,
+    signal: AbortSignal,
+  ) => {
+    try {
+      const response = await fetch(
+        restApiUrlBase + '/Transaction/by_account/' + accountId,
+        {
+          method: 'GET',
+          signal: signal,
+          headers: {
+            Accept: 'application/json',
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      if (response.status === 403) {
+        throw new Error('Unauthorized');
+      } else if (response.status !== 200) {
+        throw new Error('Failed to fetch transactions: ' + response);
+      }
+
+      return response.json();
+    } catch (error) {
+      console.error('Failed API on list transactions:', error);
+      throw error;
+    }
+  };
+
+  return {
+    list,
+  };
+};
+
+export default transactionsApi;
