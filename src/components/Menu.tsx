@@ -40,7 +40,6 @@ const Menu: React.FC = () => {
   const [userPresence] = useGlobalState('userPresence');
 
   const handleLogout = () => {
-    debugger;
     menuController.close();
     history.push('/login');
   };

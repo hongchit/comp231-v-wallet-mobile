@@ -5,7 +5,8 @@ const { setGlobalState, useGlobalState } = createGlobalState({
     token: '',
     email: '',
     name: '',
-    id: '',
+    accountId: '',
+    profileId: '',
   },
   testing: true,
 });

@@ -1,44 +1,77 @@
 import React, { useEffect, useState } from 'react';
-import {
-  IonPage,
-  IonHeader,
-  IonToolbar,
-  IonTitle,
-  IonContent,
-  IonList,
-  IonItem,
-  IonLabel,
-  IonButtons,
-  IonMenuButton,
-} from '@ionic/react';
 import { useGlobalState } from '../../global/global.state';
+import { dashboardService } from './dashboard.service';
+import {
+  IonGrid,
+  IonRow,
+  IonCol,
+  IonCardHeader,
+  IonCardTitle,
+  IonCardSubtitle,
+  IonCard,
+  IonLabel,
+  IonItemDivider,
+} from '@ionic/react';
+import { FinancialAccount } from '../../models/financial-account.model';
+
+var financialAccounts: FinancialAccount[] = [];
 
 const Dashboard: React.FC = () => {
   const [userPresence] = useGlobalState('userPresence');
-  // there are still some errors for fetching finance account information.
+  const [financialAccountData, setFinancialAccounts] = useState<
+    FinancialAccount[] | null
+  >(null);
+
   useEffect(() => {
-    // const fetchAccounts = async () => {
-    //   try {
-    //     const response = await fetch(
-    //       'http://localhost:5241/api/finance/transaction',
-    //     );
-    //     const data = await response.json();
-    //     if (data.success) {
-    //       setAccounts(data.accounts);
-    //     } else {
-    //       alert('Failed to load accounts');
-    //     }
-    //   } catch (error) {
-    //     console.error('Error fetching accounts:', error);
-    //   }
-    // };
-    // fetchAccounts();
-  }, []);
+    const fetchFinancialAccounts = async () => {
+      try {
+        if (!userPresence.profileId) {
+          return;
+        }
+
+        const service = dashboardService(userPresence);
+        financialAccounts = await service.getFinancialAccounts();
+        setFinancialAccounts(financialAccounts);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchFinancialAccounts();
+  }, [userPresence]);
+
   return (
-    <>
-      <h2> Welcome to V-Wallet {userPresence.name}</h2>
-      <p>This is a static dashboard landing page.xxx</p>
-    </>
+    <IonGrid>
+      <IonRow>
+        <IonCol>
+          <IonItemDivider>
+            <IonLabel>Accounts</IonLabel>
+          </IonItemDivider>
+        </IonCol>
+      </IonRow>
+      <IonRow>
+        {financialAccountData &&
+          financialAccountData.map((data, index) => {
+            return (
+              <IonCol key={index}>
+                <IonCard>
+                  <IonCardHeader>
+                    <IonCardTitle>{data.name}</IonCardTitle>
+                    <IonCardSubtitle>{data.balance.toFixed(2)}</IonCardSubtitle>
+                  </IonCardHeader>
+                </IonCard>
+              </IonCol>
+            );
+          })}
+      </IonRow>
+      <IonRow>
+        <IonCol>
+          <IonItemDivider>
+            <IonLabel>Transactions</IonLabel>
+          </IonItemDivider>
+        </IonCol>
+      </IonRow>
+    </IonGrid>
   );
 };
 

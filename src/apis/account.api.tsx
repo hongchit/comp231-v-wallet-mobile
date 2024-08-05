@@ -1,6 +1,5 @@
 export const accountsApi = () => {
   let url = 'http://localhost:5241/api/account';
-
   const login = async (email: string, password: string) => {
     let response = await fetch(`${url}/login`, {
       method: 'POST',

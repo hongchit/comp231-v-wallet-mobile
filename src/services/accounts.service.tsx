@@ -1,5 +1,5 @@
-import { setGlobalState, useGlobalState } from '../global/global.state';
-import accountsApi from '../hooks/accounts.api';
+import { setGlobalState } from '../global/global.state';
+import accountsApi from '../apis/account.api';
 
 export const accountsService = () => {
   const login = async (email: string, password: string) => {
@@ -10,12 +10,20 @@ export const accountsService = () => {
         return null;
       }
 
-      localStorage.setItem('user-presence', JSON.stringify(authenticatedUser));
+      localStorage.setItem(
+        'user-presence',
+        JSON.stringify({
+          token: `Bearer ${authenticatedUser.token}`,
+          email: authenticatedUser.email,
+          name: authenticatedUser.name,
+          accountId: authenticatedUser.accountId,
+          profileId: authenticatedUser.profileId,
+        }),
+      );
 
       setGlobalState('userPresence', authenticatedUser);
       return authenticatedUser;
     } catch {
-      debugger;
       return null;
     }
   };
