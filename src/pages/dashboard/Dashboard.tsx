@@ -111,7 +111,7 @@ const Dashboard: React.FC = () => {
                     <IonCardHeader>
                       <IonCardTitle>{data.name}</IonCardTitle>
                       <IonCardSubtitle>
-                        {data.balance.toFixed(2)}
+                        ${data.balance.toFixed(2)}
                       </IonCardSubtitle>
                     </IonCardHeader>
                   </IonCard>
@@ -126,7 +126,6 @@ const Dashboard: React.FC = () => {
                 <IonCardTitle>Transactions</IonCardTitle>
                 <IonCardSubtitle>Last 7 Days</IonCardSubtitle>
               </IonCardHeader>
-              <IonItemDivider />
               <IonList lines="full">
                 {financialTransactionsData.length === 0 ? (
                   <IonItem>
@@ -137,7 +136,8 @@ const Dashboard: React.FC = () => {
                     return (
                       <IonItem key={index}>
                         <IonLabel>{data.categoryName}</IonLabel>
-                        <IonLabel>$ {data.amount.toFixed(2)}</IonLabel>
+                        <IonLabel>${data.amount.toFixed(2)}</IonLabel>
+                        <IonLabel>{data.type}</IonLabel>
                       </IonItem>
                     );
                   })
