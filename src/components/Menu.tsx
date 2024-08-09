@@ -40,6 +40,7 @@ const Menu: React.FC = () => {
 
   const handleLogout = () => {
     menuController.close();
+    // isaac 
     history.push('/login');
   };
 
