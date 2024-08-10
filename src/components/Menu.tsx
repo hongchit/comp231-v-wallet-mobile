@@ -12,10 +12,11 @@ import {
 } from '@ionic/react';
 import { menuController } from '@ionic/core/components';
 
-import { useLocation, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import { logOut, mailOutline, mailSharp } from 'ionicons/icons';
 import './Menu.css';
 import { useGlobalState } from '../global/global.state';
+import authHelper from '../helpers/auth.helper';
 
 interface AppPage {
   url: string;
@@ -45,6 +46,7 @@ const Menu: React.FC = () => {
   const [userPresence] = useGlobalState('userPresence');
 
   const handleLogout = () => {
+    authHelper.logoutUser();
     menuController.close();
     history.push('/login');
   };
@@ -84,6 +86,7 @@ const Menu: React.FC = () => {
               fill="clear"
               className="logout-button"
               onClick={handleLogout}
+              href="/login"
             >
               Logout
             </IonButton>
