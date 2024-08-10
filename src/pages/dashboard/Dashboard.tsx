@@ -96,7 +96,7 @@ const Dashboard: React.FC = () => {
   };
 
   const getAccountDetails = (accountId: string) => {
-    history.push(`/finance/account/${accountId}`);
+    history.push(`/financial-account/${accountId}`);
   };
 
   return (

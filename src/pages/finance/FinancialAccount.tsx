@@ -18,12 +18,9 @@ import {
   IonCardSubtitle,
   IonCardContent,
 } from '@ionic/react';
-import { useHistory } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 
 import { useGlobalState } from '../../global/global.state';
-import { dashboardService } from '../dashboard//dashboard.service';
-
-import { FinancialAccount as FAModel } from '../../models/financial-account.model';
 import { FinancialTransaction } from '../../models/financial-transaction.model';
 import { financeService } from '../../services/finance.service';
 
@@ -37,7 +34,8 @@ interface AccountInfo {
   transactions: FinancialTransaction[];
 }
 
-const FinancialAccount: React.FC<{ accountId: string }> = ({ accountId }) => {
+const FinancialAccount: React.FC = () => {
+  const { accountId } = useParams<{ accountId: string }>();
   const [userPresence] = useGlobalState('userPresence');
   const [accountInfo, setAccountInfo] = useState<AccountInfo>({
     accountId: '',
@@ -52,33 +50,27 @@ const FinancialAccount: React.FC<{ accountId: string }> = ({ accountId }) => {
   const history = useHistory();
 
   useEffect(() => {
-    const loadFinancialAccount = async (accountId: string) => {
+    const loadFinancialData = async (accountId: string) => {
       const financialAccount = await financeService(
         userPresence,
       ).getFinancialAccount(accountId);
-
+      const financialTransactions = await financeService(
+        userPresence,
+      ).getFinancialTransactionsByAccount(accountId);
+      debugger;
       setAccountInfo({
         accountId: financialAccount?.id ?? '',
         accountNumber: financialAccount?.number ?? '',
         accountName: financialAccount?.name ?? '',
         initialBalance: financialAccount?.initialBalance ?? 0,
         currentBalance: financialAccount?.balance ?? 0,
-        accountType: financialAccount?.type ?? '',
-        transactions: [],
+        accountType: financialAccount?.financialAccountType ?? '',
+        transactions: financialTransactions,
       });
     };
 
-    const loadFinancialTransactions = async (accountId: string) => {
-      const financialTransactions = await financeService(
-        userPresence,
-      ).getFinancialTransactionsByAccount(accountId);
-
-      setAccountInfo({ ...accountInfo, transactions: financialTransactions });
-    };
-
-    loadFinancialAccount(accountId);
-    loadFinancialTransactions(accountId);
-  }, []);
+    loadFinancialData(accountId);
+  }, [accountId]);
 
   const handleDeleteAccount = async () => {
     try {

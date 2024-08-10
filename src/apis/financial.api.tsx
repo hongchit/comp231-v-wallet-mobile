@@ -78,7 +78,7 @@ export const financialAccountApi = (userPresence: any) => {
   };
 
   const getFinancialTransactionsByAccountId = async (accountId: string) => {
-    let response = await fetch(`${url}/${accountId}/transaction`, {
+    let response = await fetch(`${url}/${accountId}/transactions`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
