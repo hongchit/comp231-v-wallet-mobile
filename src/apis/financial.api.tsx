@@ -1,14 +1,19 @@
+import { config } from '../config/config';
+
 export const financialAccountApi = (userPresence: any) => {
-  let url = 'http://localhost:5241/api/finance';
+  let restApiUrlBase = config.restApiBase + '/finance';
 
   const getAccounts = async () => {
-    let response = await fetch(`${url}/${userPresence.profileId}/account`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `${userPresence.token}`,
+    let response = await fetch(
+      `${restApiUrlBase}/${userPresence.profileId}/account`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `${userPresence.token}`,
+        },
       },
-    });
+    );
 
     if (!response.ok) {
       throw new Error(await response.text());
@@ -18,13 +23,16 @@ export const financialAccountApi = (userPresence: any) => {
   };
 
   const getFinancialTransactions = async (userProfileId: string) => {
-    let response = await fetch(`${url}/${userProfileId}/transaction`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `${userPresence.token}`,
+    let response = await fetch(
+      `${restApiUrlBase}/${userProfileId}/transaction`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `${userPresence.token}`,
+        },
       },
-    });
+    );
 
     if (!response.ok) {
       throw new Error(await response.text());
@@ -45,7 +53,7 @@ export const financialAccountApi = (userPresence: any) => {
       transactionDate: transaction.date,
     };
 
-    let response = await fetch(`${url}/transaction`, {
+    let response = await fetch(`${restApiUrlBase}/transaction`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
