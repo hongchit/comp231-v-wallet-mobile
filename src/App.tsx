@@ -11,7 +11,6 @@ import Menu from './components/Menu';
 import Page from './pages/Page';
 import Login from './pages/login/Login';
 import FinancialAccount from './pages/finance/FinancialAccount';
-import FinancialAccountList from './pages/finance/FinancialAccountList';
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
 /* Basic CSS for apps built with Ionic */
@@ -108,11 +107,6 @@ const App: React.FC = () => {
               path="/financial-account"
               component={FinancialAccount}
               exact
-            />
-            <Route
-              path="/financial-accounts"
-              component={FinancialAccountList}
-              exact={true}
             />
           </IonRouterOutlet>
         </IonSplitPane>

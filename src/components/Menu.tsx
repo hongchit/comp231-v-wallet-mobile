@@ -32,12 +32,6 @@ const appPages: AppPage[] = [
     iosIcon: mailOutline,
     mdIcon: mailSharp,
   },
-  {
-    title: 'Financial Accounts',
-    url: '/financial-accounts',
-    iosIcon: mailOutline,
-    mdIcon: mailSharp,
-  },
 ];
 
 const Menu: React.FC = () => {
