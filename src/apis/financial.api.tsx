@@ -204,24 +204,8 @@ export const financialAccountApi = (userPresence: any) => {
     return await response.json();
   };
 
-  const getAccount = async (accountId: string) => {
-    let response = await fetch(`${url}/${accountId}`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `${userPresence.token}`,
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(await response.text());
-    }
-
-    return await response.json();
-  };
-
   const getFinancialTransactionsByAccountId = async (accountId: string) => {
-    let response = await fetch(`${url}/${accountId}/transactions`, {
+    let response = await fetch(`${restApiUrlBase}/${accountId}/transactions`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useGlobalState } from '../../global/global.state';
-import { financeService } from './finance.service';
+import { financeService } from '../../services/finance.service';
 import { useHistory } from 'react-router-dom';
 import { IonButton, IonIcon, IonAlert } from '@ionic/react';
 import { trashOutline } from 'ionicons/icons';

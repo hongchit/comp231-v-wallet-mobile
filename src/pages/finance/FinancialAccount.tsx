@@ -64,7 +64,7 @@ const FinancialAccount: React.FC = () => {
         accountName: financialAccount?.name ?? '',
         initialBalance: financialAccount?.initialBalance ?? 0,
         currentBalance: financialAccount?.balance ?? 0,
-        accountType: financialAccount?.financialAccountType ?? '',
+        accountType: financialAccount?.type ?? '',
         transactions: financialTransactions,
       });
     };
@@ -74,6 +74,7 @@ const FinancialAccount: React.FC = () => {
 
   const handleDeleteAccount = async () => {
     try {
+      // TODO: Use the financeService to delete the account
       const response = await fetch(
         `http://localhost:5241/api/Account/${accountInfo.accountNumber}`,
         {

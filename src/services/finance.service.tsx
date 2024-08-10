@@ -5,16 +5,48 @@ import { FinancialTransaction } from '../models/financial-transaction.model';
 export const financeService = (userPresence: any) => {
   const getFinancialAccount = async (
     accountId: string,
+    signal?: AbortSignal,
   ): Promise<FinancialAccount | null> => {
     try {
       var response = await financialAccountApi(userPresence).getAccount(
         accountId,
+        signal,
       );
 
       return response as FinancialAccount;
     } catch (error) {
       console.log(error);
-      return null;
+      return new FinancialAccount();
+    }
+  };
+
+  const updateFinancialAccount = async (
+    account: FinancialAccount,
+    singal?: AbortSignal,
+  ) => {
+    try {
+      await financialAccountApi(userPresence).updateAccount(
+        userPresence.profileId,
+        account,
+        singal,
+      );
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const deleteFinancialAccount = async (
+    accountId: string,
+    singal?: AbortSignal,
+  ) => {
+    try {
+      await financialAccountApi(userPresence).deleteAccount(
+        userPresence.profileId,
+        accountId,
+        singal,
+      );
+    } catch (err) {
+      console.log(err);
     }
   };
 
@@ -35,6 +67,8 @@ export const financeService = (userPresence: any) => {
 
   return {
     getFinancialAccount,
+    updateFinancialAccount,
+    deleteFinancialAccount,
     getFinancialTransactionsByAccount,
   };
 };

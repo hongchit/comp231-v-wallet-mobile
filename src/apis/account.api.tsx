@@ -33,7 +33,7 @@ export const accountsApi = () => {
   };
 
   const register = async (userProfile: UserProfile) => {
-    let response = await fetch(`${url}/register`, {
+    let response = await fetch(`${restApiUrlBase}/register`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

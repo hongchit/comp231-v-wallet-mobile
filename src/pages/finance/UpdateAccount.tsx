@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useGlobalState } from '../../global/global.state';
-import { financeService } from './finance.service';
+import { financeService } from '../../services/finance.service';
 import { useHistory, useParams } from 'react-router-dom';
 import {
   IonButton,
@@ -48,12 +48,12 @@ const UpdateAccount: React.FC = () => {
           accountId,
           signal,
         );
-        setAccount(fetchedAccount);
-        setAccountName(fetchedAccount.name);
-        setAccountNumber(fetchedAccount.number);
-        setBalance(fetchedAccount.balance);
-        setAccountType(AccountType.parse(fetchedAccount.type));
-        setCurrency(Currency.parse(fetchedAccount.currency));
+        setAccount(fetchedAccount ?? new FinancialAccount());
+        setAccountName(fetchedAccount?.name ?? '');
+        setAccountNumber(fetchedAccount?.number ?? '');
+        setBalance(fetchedAccount?.balance ?? 0);
+        setAccountType(AccountType.parse(fetchedAccount?.type ?? ''));
+        setCurrency(Currency.parse(fetchedAccount?.currency ?? ''));
       } catch (error) {
         console.error('Failed to fetch account:', error);
       }

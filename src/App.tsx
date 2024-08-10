@@ -104,7 +104,7 @@ const App: React.FC = () => {
             </Route>
             <Route path="/dashboard" component={Dashboard} exact={true} />
             <Route
-              path="/finance/:accountId/edit"
+              path="/financial-account/:accountId/edit"
               component={UpdateAccount}
               exact={true}
             />
