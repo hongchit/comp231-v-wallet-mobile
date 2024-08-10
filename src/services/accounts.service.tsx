@@ -1,5 +1,6 @@
 import { setGlobalState } from '../global/global.state';
 import accountsApi from '../apis/account.api';
+import { UserProfile } from '../models/userRegistration.model';
 
 export const accountsService = () => {
   const login = async (email: string, password: string) => {
@@ -37,8 +38,17 @@ export const accountsService = () => {
     }
   };
 
+  const register = async (userProfile: UserProfile) => {
+    try {
+      await accountsApi().register(userProfile);
+    } catch {
+      throw new Error('Error registering user');
+    }
+  };
+
   return {
     login,
     logout,
+    register,
   };
 };

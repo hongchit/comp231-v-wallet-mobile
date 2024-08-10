@@ -1,5 +1,8 @@
+import { UserProfile } from '../models/userRegistration.model';
+
 export const accountsApi = () => {
   let url = 'http://localhost:5241/api/account';
+
   const login = async (email: string, password: string) => {
     let response = await fetch(`${url}/login`, {
       method: 'POST',
@@ -27,9 +30,22 @@ export const accountsApi = () => {
     return await response.json();
   };
 
+  const register = async (userProfile: UserProfile) => {
+    let response = await fetch(`${url}/register`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(userProfile),
+    });
+
+    return await response.json();
+  };
+
   return {
     login,
     logout,
+    register,
   };
 };
 

@@ -8,7 +8,6 @@ const { setGlobalState, useGlobalState } = createGlobalState({
     accountId: '',
     profileId: '',
   },
-  testing: true,
 });
 
 export { setGlobalState, useGlobalState };

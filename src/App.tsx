@@ -6,11 +6,10 @@ import {
   setupIonicReact,
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
-import { Redirect, Route, useHistory } from 'react-router-dom';
+import { Route, useHistory } from 'react-router-dom';
 import Menu from './components/Menu';
 import Page from './pages/Page';
 import Login from './pages/login/Login';
-import SignUp from './pages/signup/Signup';
 
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
@@ -103,7 +102,6 @@ const App: React.FC = () => {
             </Route>
             <Route path="/dashboard" component={Dashboard} exact={true} />
             <Route path="/login" component={Login} exact={true} />
-            <Route path="/signup" component={SignUp} exact={true} />
           </IonRouterOutlet>
         </IonSplitPane>
       </IonReactRouter>

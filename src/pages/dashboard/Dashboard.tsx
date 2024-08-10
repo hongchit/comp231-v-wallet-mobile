@@ -76,6 +76,10 @@ const Dashboard: React.FC = () => {
   };
 
   useEffect(() => {
+    if (userPresence.token === '') {
+      return;
+    }
+
     fetchFinancialAccounts();
     fetchFinancialTransactions();
   }, [userPresence]);
