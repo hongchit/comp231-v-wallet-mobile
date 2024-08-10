@@ -16,6 +16,7 @@ import {
   IonCardHeader,
   IonCardTitle,
   IonCardSubtitle,
+  IonCardContent,
 } from '@ionic/react';
 import { useHistory } from 'react-router-dom';
 
@@ -24,88 +25,60 @@ import { dashboardService } from '../dashboard//dashboard.service';
 
 import { FinancialAccount as FAModel } from '../../models/financial-account.model';
 import { FinancialTransaction } from '../../models/financial-transaction.model';
-
-interface Transaction {
-  date: string;
-  description: string;
-  amount: number;
-}
+import { financeService } from '../../services/finance.service';
 
 interface AccountInfo {
+  accountId: string;
   accountNumber: string;
-  accountHolder: string;
-  balance: number;
-  transactions: Transaction[];
+  accountName: string;
+  initialBalance: number;
+  currentBalance: number;
+  accountType: string;
+  transactions: FinancialTransaction[];
 }
 
-const FinancialAccount: React.FC = () => {
+const FinancialAccount: React.FC<{ accountId: string }> = ({ accountId }) => {
   const [userPresence] = useGlobalState('userPresence');
-  const [financialAccountData, setFinancialAccounts] = useState<FAModel[] | []>(
-    [],
-  );
-  const [financialTransactionsData, setFinancialTransactions] = useState<
-    FinancialTransaction[]
-  >([]);
-
   const [accountInfo, setAccountInfo] = useState<AccountInfo>({
+    accountId: '',
     accountNumber: '',
-    accountHolder: '',
-    balance: 0,
+    accountName: '',
+    initialBalance: 0,
+    currentBalance: 0,
+    accountType: '',
     transactions: [],
   });
   const [showAlert, setShowAlert] = useState(false);
   const history = useHistory();
 
   useEffect(() => {
-    // Fetch account information from an API or use dummy data
-    const fetchAccountInfo = async () => {
-      // Replace with your actual API call
-      const response = await fetch('http://localhost:5241/api/Account/info');
-      const data = await response.json();
+    const loadFinancialAccount = async (accountId: string) => {
+      const financialAccount = await financeService(
+        userPresence,
+      ).getFinancialAccount(accountId);
 
       setAccountInfo({
-        accountNumber: data.accountNumber,
-        accountHolder: data.accountHolder,
-        balance: data.balance,
-        transactions: data.transactions,
+        accountId: financialAccount?.id ?? '',
+        accountNumber: financialAccount?.number ?? '',
+        accountName: financialAccount?.name ?? '',
+        initialBalance: financialAccount?.initialBalance ?? 0,
+        currentBalance: financialAccount?.balance ?? 0,
+        accountType: financialAccount?.type ?? '',
+        transactions: [],
       });
     };
 
-    //fetchAccountInfo();
+    const loadFinancialTransactions = async (accountId: string) => {
+      const financialTransactions = await financeService(
+        userPresence,
+      ).getFinancialTransactionsByAccount(accountId);
+
+      setAccountInfo({ ...accountInfo, transactions: financialTransactions });
+    };
+
+    loadFinancialAccount(accountId);
+    loadFinancialTransactions(accountId);
   }, []);
-
-  const fetchFinancialAccounts = async () => {
-    try {
-      if (!userPresence.profileId) {
-        return;
-      }
-
-      const service = dashboardService(userPresence);
-      var financialAccounts = await service.getFinancialAccounts();
-      setFinancialAccounts(financialAccounts);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const fetchFinancialTransactions = async () => {
-    try {
-      if (!userPresence.profileId) {
-        return;
-      }
-
-      const service = dashboardService(userPresence);
-      var financialTransactions = await service.getFinancialTransactions();
-      setFinancialTransactions(financialTransactions);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    fetchFinancialAccounts();
-    fetchFinancialTransactions();
-  }, [userPresence]);
 
   const handleDeleteAccount = async () => {
     try {
@@ -136,21 +109,36 @@ const FinancialAccount: React.FC = () => {
       </IonHeader>
       <IonContent>
         <IonRow>
-          {financialAccountData &&
-            financialAccountData.map((data, index) => {
-              return (
-                <IonCol key={index}>
-                  <IonCard>
-                    <IonCardHeader>
-                      <IonCardTitle>{data.name}</IonCardTitle>
-                      <IonCardSubtitle>
-                        ${data.balance.toFixed(2)}
-                      </IonCardSubtitle>
-                    </IonCardHeader>
-                  </IonCard>
-                </IonCol>
-              );
-            })}
+          <IonCol key={accountInfo.accountId}>
+            <IonCard>
+              <IonCardHeader>
+                <IonCardTitle>{accountInfo.accountName}</IonCardTitle>
+                <IonCardSubtitle>
+                  Account Type: {accountInfo.accountType}
+                </IonCardSubtitle>
+                <IonCardContent>
+                  <IonList>
+                    <IonItem>
+                      <IonLabel>Account Number</IonLabel>
+                      <IonLabel>{accountInfo.accountNumber}</IonLabel>
+                    </IonItem>
+                    <IonItem>
+                      <IonLabel>Initial Balance</IonLabel>
+                      <IonLabel>
+                        ${accountInfo.initialBalance.toFixed(2)}
+                      </IonLabel>
+                    </IonItem>
+                    <IonItem>
+                      <IonLabel>Current Balance</IonLabel>
+                      <IonLabel>
+                        ${accountInfo.currentBalance.toFixed(2)}
+                      </IonLabel>
+                    </IonItem>
+                  </IonList>
+                </IonCardContent>
+              </IonCardHeader>
+            </IonCard>
+          </IonCol>
         </IonRow>
         <IonRow>
           <IonCol>
@@ -160,12 +148,14 @@ const FinancialAccount: React.FC = () => {
                 <IonCardSubtitle>Last 7 Days</IonCardSubtitle>
               </IonCardHeader>
               <IonList lines="full">
-                {financialTransactionsData.length === 0 ? (
+                {accountInfo.transactions.length === 0 ? (
                   <IonItem>
-                    <IonLabel>No records found</IonLabel>
+                    <IonLabel>
+                      No transactions available for this account
+                    </IonLabel>
                   </IonItem>
                 ) : (
-                  financialTransactionsData.map((data, index) => {
+                  accountInfo.transactions.map((data, index) => {
                     return (
                       <IonItem key={index}>
                         <IonLabel>{data.categoryName}</IonLabel>

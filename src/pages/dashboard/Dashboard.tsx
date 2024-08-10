@@ -22,6 +22,7 @@ import { FinancialAccount } from '../../models/financial-account.model';
 import { FinancialTransaction } from '../../models/financial-transaction.model';
 import { add } from 'ionicons/icons';
 import NewTransactionModal from '../finance/NewTransactionModal';
+import { useHistory } from 'react-router';
 
 const Dashboard: React.FC = () => {
   const [userPresence] = useGlobalState('userPresence');
@@ -31,6 +32,7 @@ const Dashboard: React.FC = () => {
   const [financialTransactionsData, setFinancialTransactions] = useState<
     FinancialTransaction[]
   >([]);
+  const history = useHistory();
 
   const fetchFinancialAccounts = async () => {
     try {
@@ -93,6 +95,10 @@ const Dashboard: React.FC = () => {
     //add the logic to add financial account here
   };
 
+  const getAccountDetails = (accountId: string) => {
+    history.push(`/finance/account/${accountId}`);
+  };
+
   return (
     <>
       <IonGrid>
@@ -122,7 +128,7 @@ const Dashboard: React.FC = () => {
             financialAccountData.map((data, index) => {
               return (
                 <IonCol key={index}>
-                  <IonCard>
+                  <IonCard onClick={() => getAccountDetails(data.id)}>
                     <IonCardHeader>
                       <IonCardTitle>{data.name}</IonCardTitle>
                       <IonCardSubtitle>
