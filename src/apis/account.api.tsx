@@ -1,3 +1,5 @@
+import { UserProfile } from '../models/userRegistration.model';
+
 import { config } from '../config/config';
 
 export const accountsApi = () => {
@@ -30,9 +32,22 @@ export const accountsApi = () => {
     return await response.json();
   };
 
+  const register = async (userProfile: UserProfile) => {
+    let response = await fetch(`${url}/register`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(userProfile),
+    });
+
+    return await response.json();
+  };
+
   return {
     login,
     logout,
+    register,
   };
 };
 

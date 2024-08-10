@@ -6,12 +6,11 @@ import {
   setupIonicReact,
 } from '@ionic/react';
 import { IonReactRouter } from '@ionic/react-router';
-import { Redirect, Route, useHistory } from 'react-router-dom';
+import { Route, useHistory } from 'react-router-dom';
 import Menu from './components/Menu';
 import Page from './pages/Page';
 import Login from './pages/login/Login';
-import SignUp from './pages/signup/Signup';
-
+import FinancialAccount from './pages/finance/FinancialAccount';
 /* Core CSS required for Ionic components to work properly */
 import '@ionic/react/css/core.css';
 /* Basic CSS for apps built with Ionic */
@@ -39,6 +38,7 @@ setupIonicReact();
 const App: React.FC = () => {
   const [idleTime, setIdleTime] = useState(0);
   const history = useHistory();
+
   const [userPresence] = useGlobalState('userPresence');
 
   const initializeGlobalState = async () => {
@@ -109,7 +109,11 @@ const App: React.FC = () => {
               exact={true}
             />
             <Route path="/login" component={Login} exact={true} />
-            <Route path="/signup" component={SignUp} exact={true} />
+            <Route
+              path="/financial-account/:accountId"
+              component={FinancialAccount}
+              exact
+            />
           </IonRouterOutlet>
         </IonSplitPane>
       </IonReactRouter>
