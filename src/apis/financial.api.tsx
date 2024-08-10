@@ -23,6 +23,25 @@ export const financialAccountApi = (userPresence: any) => {
     return await response.json();
   };
 
+  const getAccount = async (accountId: string, signal?: AbortSignal) => {
+    let response = await fetch(
+      `${restApiUrlBase}/${userPresence.profileId}/account/${accountId}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `${userPresence.token}`,
+        },
+      },
+    );
+
+    if (!response.ok) {
+      throw new Error(await response.text());
+    }
+
+    return await response.json();
+  };
+
   const createAccount = async (
     userProfileId: string,
     account: any,
@@ -187,6 +206,7 @@ export const financialAccountApi = (userPresence: any) => {
 
   return {
     getAccounts,
+    getAccount,
     createAccount,
     updateAccount,
     deleteAccount,

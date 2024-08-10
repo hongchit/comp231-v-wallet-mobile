@@ -32,6 +32,7 @@ import './theme/variables.css';
 import authHelper from './helpers/auth.helper';
 import Dashboard from './pages/dashboard/Dashboard';
 import { setGlobalState, useGlobalState } from './global/global.state';
+import UpdateAccount from './pages/finance/UpdateAccount';
 
 setupIonicReact();
 
@@ -102,6 +103,11 @@ const App: React.FC = () => {
               )}
             </Route>
             <Route path="/dashboard" component={Dashboard} exact={true} />
+            <Route
+              path="/finance/:accountId/edit"
+              component={UpdateAccount}
+              exact={true}
+            />
             <Route path="/login" component={Login} exact={true} />
             <Route path="/signup" component={SignUp} exact={true} />
           </IonRouterOutlet>
