@@ -36,6 +36,10 @@ const Login: React.FC = () => {
     history.push('/dashboard');
   };
 
+  const handleRegister = () => {
+    history.push('/register');
+  };
+
   return (
     <IonPage>
       <IonHeader>
@@ -62,6 +66,9 @@ const Login: React.FC = () => {
         </IonItem>
         <IonButton expand="full" onClick={handleLogin}>
           Login
+        </IonButton>
+        <IonButton color="warning" expand="full" onClick={handleRegister}>
+          Register
         </IonButton>
         {hasError ? (
           <IonText color="warning">Username or password is incorrect</IonText>
