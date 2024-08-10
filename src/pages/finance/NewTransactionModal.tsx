@@ -1,3 +1,4 @@
+
 import {
   IonContent,
   IonItem,
@@ -106,6 +107,9 @@ const TransactionModal: React.FC<TransactionModalProperties> = ({
               }
             />
           </IonItem>
+
+
+          
           <IonItem>
             <IonInput
               label="Enter the description"
