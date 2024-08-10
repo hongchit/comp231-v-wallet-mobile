@@ -6,6 +6,7 @@ export class FinancialAccount {
   balance: number;
   type: string;
   financialAccountType: string;
+  currency: string;
 
   constructor(
     id: string = '',
@@ -15,6 +16,7 @@ export class FinancialAccount {
     balance: number = 0,
     type: string = '',
     financialAccountType: string = '',
+    currency: string = 'CAD',
   ) {
     this.id = id;
     this.name = name;
@@ -23,5 +25,6 @@ export class FinancialAccount {
     this.balance = Number(balance.toFixed(2));
     this.type = type;
     this.financialAccountType = financialAccountType;
+    this.currency = currency;
   }
 }

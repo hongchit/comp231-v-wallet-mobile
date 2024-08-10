@@ -1,13 +1,60 @@
+import { use } from 'chai';
+import { config } from '../config/config';
+
 export const financialAccountApi = (userPresence: any) => {
-  let url = 'http://localhost:5241/api/finance';
+  let restApiUrlBase = config.restApiBase + '/finance';
 
   const getAccounts = async () => {
-    let response = await fetch(`${url}/${userPresence.profileId}/account`, {
-      method: 'GET',
+    let response = await fetch(
+      `${restApiUrlBase}/${userPresence.profileId}/account`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `${userPresence.token}`,
+        },
+      },
+    );
+
+    if (!response.ok) {
+      throw new Error(await response.text());
+    }
+
+    return await response.json();
+  };
+
+  const createAccount = async (
+    userProfileId: string,
+    account: any,
+    signal?: AbortSignal,
+  ) => {
+    if (!userProfileId) {
+      throw new Error('User Profile Id is required');
+    }
+    if (!account) {
+      throw new Error('Account is required');
+    }
+    var newAccount = {
+      name: account.name,
+      number: account.number,
+      type: account.type,
+      currency: account.currency,
+      financialAccountType: {
+        id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+        name: '',
+        description: '',
+      },
+    };
+
+    let response = await fetch(`${restApiUrlBase}/${userProfileId}/account`, {
+      method: 'POST',
       headers: {
+        Accept: 'application/json',
         'Content-Type': 'application/json',
         Authorization: `${userPresence.token}`,
       },
+      signal: signal,
+      body: JSON.stringify(newAccount),
     });
 
     if (!response.ok) {
@@ -17,14 +64,91 @@ export const financialAccountApi = (userPresence: any) => {
     return await response.json();
   };
 
-  const getFinancialTransactions = async (userProfileId: string) => {
-    let response = await fetch(`${url}/${userProfileId}/transaction`, {
-      method: 'GET',
+  const updateAccount = async (
+    userProfileId: string,
+    account: any,
+    signal?: AbortSignal,
+  ) => {
+    if (!userProfileId) {
+      throw new Error('User Profile Id is required');
+    }
+    if (!account) {
+      throw new Error('Account is required');
+    }
+    var updatedAccount = {
+      id: account.id,
+      name: account.name,
+      number: account.number,
+      type: account.type,
+      currency: account.currency,
+      financialAccountType: {
+        id: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
+        name: '',
+        description: '',
+      },
+    };
+
+    let response = await fetch(`${restApiUrlBase}/${userProfileId}/account`, {
+      method: 'PUT',
       headers: {
+        Accept: 'application/json',
         'Content-Type': 'application/json',
         Authorization: `${userPresence.token}`,
       },
+      signal: signal,
+      body: JSON.stringify(updatedAccount),
     });
+
+    if (!response.ok) {
+      throw new Error(await response.text());
+    }
+
+    return await response.json();
+  };
+
+  const deleteAccount = async (
+    userProfileId: string,
+    accountId: string,
+    signal?: AbortSignal,
+  ) => {
+    if (!userProfileId) {
+      throw new Error('User Profile Id is required');
+    }
+    if (!accountId) {
+      throw new Error('Account Id is required');
+    }
+
+    let response = await fetch(
+      `${restApiUrlBase}/${userProfileId}/account/${accountId}`,
+      {
+        method: 'DELETE',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+          Authorization: `${userPresence.token}`,
+        },
+        signal: signal,
+      },
+    );
+
+    if (!response.ok) {
+      throw new Error(await response.text());
+    }
+
+    return await response.json();
+  };
+
+  const getFinancialTransactions = async (userProfileId: string) => {
+    let response = await fetch(
+      `${restApiUrlBase}/${userProfileId}/transaction`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `${userPresence.token}`,
+        },
+      },
+    );
 
     if (!response.ok) {
       throw new Error(await response.text());
@@ -45,7 +169,7 @@ export const financialAccountApi = (userPresence: any) => {
       transactionDate: transaction.date,
     };
 
-    let response = await fetch(`${url}/transaction`, {
+    let response = await fetch(`${restApiUrlBase}/transaction`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -62,7 +186,7 @@ export const financialAccountApi = (userPresence: any) => {
   };
 
   const getAccount = async (accountId: string) => {
-    let response = await fetch(`${url}/${accountId}`, {
+    let response = await fetch(`${restApiUrlBase}/${accountId}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -78,7 +202,7 @@ export const financialAccountApi = (userPresence: any) => {
   };
 
   const getFinancialTransactionsByAccountId = async (accountId: string) => {
-    let response = await fetch(`${url}/${accountId}/transactions`, {
+    let response = await fetch(`${restApiUrlBase}/${accountId}/transactions`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -96,6 +220,9 @@ export const financialAccountApi = (userPresence: any) => {
   return {
     getAccounts,
     getAccount,
+    createAccount,
+    updateAccount,
+    deleteAccount,
     getFinancialTransactions,
     getFinancialTransactionsByAccountId,
     createTransaction,

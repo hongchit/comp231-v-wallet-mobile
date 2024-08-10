@@ -15,6 +15,21 @@ export const dashboardService = (userPresence: any) => {
     }
   };
 
+  const createFinancialAccount = async (
+    account: FinancialAccount,
+    singal?: AbortSignal,
+  ) => {
+    try {
+      await financialAccountApi(userPresence).createAccount(
+        userPresence.profileId,
+        account,
+        singal,
+      );
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   const getFinancialTransactions = async (): Promise<
     FinancialTransaction[]
   > => {
@@ -50,6 +65,7 @@ export const dashboardService = (userPresence: any) => {
 
   return {
     getFinancialAccounts,
+    createFinancialAccount,
     getFinancialTransactions,
     createFinancialTransaction,
   };

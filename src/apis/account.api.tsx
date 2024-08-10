@@ -1,10 +1,11 @@
+import { config } from '../config/config';
 import { UserProfile } from '../models/userRegistration.model';
 
 export const accountsApi = () => {
-  let url = 'http://localhost:5241/api/account';
+  let restApiUrlBase = config.restApiBase + '/account';
 
   const login = async (email: string, password: string) => {
-    let response = await fetch(`${url}/login`, {
+    let response = await fetch(`${restApiUrlBase}/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -20,7 +21,7 @@ export const accountsApi = () => {
   };
 
   const logout = async () => {
-    let response = await fetch(`${url}/logout`, {
+    let response = await fetch(`${restApiUrlBase}/logout`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -31,7 +32,7 @@ export const accountsApi = () => {
   };
 
   const register = async (userProfile: UserProfile) => {
-    let response = await fetch(`${url}/register`, {
+    let response = await fetch(`${restApiUrlBase}/register`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

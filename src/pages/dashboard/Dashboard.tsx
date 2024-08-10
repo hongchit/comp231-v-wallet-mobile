@@ -91,8 +91,22 @@ const Dashboard: React.FC = () => {
     setIsTransactionModalOpen(true);
   };
 
-  const addAccountClick = () => {
+  const addAccountClick = async () => {
     //add the logic to add financial account here
+
+    // Testing code to create a new account, to be removed after implementing create account UI
+    const newAccount: FinancialAccount = {
+      id: '',
+      name: 'TD Savings',
+      number: '0000000000',
+      type: 'Savings',
+      initialBalance: 0,
+      balance: 0,
+      currency: 'CAD',
+    };
+    const service = dashboardService(userPresence);
+    await service.createFinancialAccount(newAccount, undefined);
+    // End of Testing code
   };
 
   const getAccountDetails = (accountId: string) => {
