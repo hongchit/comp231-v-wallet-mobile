@@ -34,7 +34,7 @@ const Login: React.FC = () => {
       return;
     }
 
-    history.push('/dashboard');
+    history.push('/');
   };
 
   const [showLogin, setShowLogin] = useState(true);
@@ -61,7 +61,7 @@ const Login: React.FC = () => {
         birthDate: new Date(birthDate),
       });
 
-      history.push('/login');
+      history.push('/');
     } catch {
       setShowModal(true);
     }
