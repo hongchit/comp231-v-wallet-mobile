@@ -107,7 +107,18 @@ const Dashboard: React.FC = () => {
           </IonCol>
         </IonRow>
         <IonRow>
-          {financialAccountData &&
+          {financialAccountData && financialAccountData.length === 0 ? (
+            <IonCol>
+              <IonCard>
+                <IonCardHeader>
+                  <IonCardTitle>Welcome to your V-Wallet</IonCardTitle>
+                  <IonCardSubtitle>
+                    Start by adding a new account
+                  </IonCardSubtitle>
+                </IonCardHeader>
+              </IonCard>
+            </IonCol>
+          ) : (
             financialAccountData.map((data, index) => {
               return (
                 <IonCol key={index}>
@@ -121,7 +132,8 @@ const Dashboard: React.FC = () => {
                   </IonCard>
                 </IonCol>
               );
-            })}
+            })
+          )}
         </IonRow>
         <IonRow>
           <IonCol>
