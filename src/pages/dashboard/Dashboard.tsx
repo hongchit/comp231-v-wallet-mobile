@@ -100,30 +100,14 @@ const Dashboard: React.FC = () => {
   const addAccountClick = async () => {
     setIsAccountModalOpen(true);
     return;
-    //add the logic to add financial account here
-
-    // Testing code to create a new account, to be removed after implementing create account UI
-    const newAccount: FinancialAccount = {
-      id: '',
-      name: 'TD Savings',
-      number: '0000000000',
-      type: 'Savings',
-      initialBalance: 0,
-      balance: 0,
-      currency: 'CAD',
-    };
-
-    // End of Testing code
   };
 
   const createNewAccount = async (newAccount: FinancialAccount) => {
     const abortController = new AbortController();
     const signal = abortController.signal;
     const service = dashboardService(userPresence);
-    try {
-      newAccount.initialBalance = 0;
-      newAccount.balance = 0;
 
+    try {
       console.log('Updating account:', newAccount);
 
       await service.createFinancialAccount(newAccount, signal);

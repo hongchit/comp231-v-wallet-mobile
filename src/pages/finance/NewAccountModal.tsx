@@ -29,6 +29,7 @@ interface FormData {
   accountName: string;
   accountType: string;
   currency: string;
+  initialBalance: number;
 }
 
 const NewAccountModal: React.FC<TransactionModalProperties> = ({
@@ -46,6 +47,7 @@ const NewAccountModal: React.FC<TransactionModalProperties> = ({
     accountName: '',
     accountType: AccountType.CASH,
     currency: Currency.CAD,
+    initialBalance: 0,
   });
   const [presentAlert] = useIonAlert();
 
@@ -59,7 +61,7 @@ const NewAccountModal: React.FC<TransactionModalProperties> = ({
       if (!validateForm()) {
         return;
       }
-      newAccount.initialBalance = 0;
+      newAccount.initialBalance = formData.initialBalance;
       newAccount.balance = 0;
       newAccount.name = formData.accountName;
       newAccount.number = formData.accountNumber;
@@ -170,13 +172,14 @@ const NewAccountModal: React.FC<TransactionModalProperties> = ({
                 })
               }
             >
-              {Object.values(AccountType)
-                .filter((value) => typeof value === 'string')
-                .map((type) => (
-                  <IonSelectOption key={type} value={type}>
-                    {type}
-                  </IonSelectOption>
-                ))}
+              {Object.values(AccountType).map((accountType) => (
+                <IonSelectOption
+                  key={accountType.toString()}
+                  value={accountType.toString()}
+                >
+                  {accountType.toString()}
+                </IonSelectOption>
+              ))}
             </IonSelect>
           </IonItem>
           <IonItem>
@@ -202,6 +205,21 @@ const NewAccountModal: React.FC<TransactionModalProperties> = ({
                   </IonSelectOption>
                 ))}
             </IonSelect>
+          </IonItem>
+          <IonItem>
+            <IonInput
+              label="Intial Balance"
+              labelPlacement="stacked"
+              type="text"
+              value={formData.initialBalance}
+              placeholder="Initial Balance"
+              onIonChange={(e) =>
+                setFormData({
+                  ...formData,
+                  initialBalance: parseInt(e.detail.value ?? '0'),
+                })
+              }
+            ></IonInput>
           </IonItem>
         </IonContent>
       </IonModal>

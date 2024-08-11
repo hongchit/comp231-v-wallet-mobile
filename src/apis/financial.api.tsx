@@ -63,6 +63,7 @@ export const financialAccountApi = (userPresence: any) => {
         name: '',
         description: '',
       },
+      initialBalance: account.initialBalance,
     };
 
     let response = await fetch(`${restApiUrlBase}/${userProfileId}/account`, {
@@ -105,6 +106,8 @@ export const financialAccountApi = (userPresence: any) => {
         name: '',
         description: '',
       },
+      initialBalance: account.initialBalance,
+      balance: account.balance,
     };
 
     let response = await fetch(`${restApiUrlBase}/${userProfileId}/account`, {
