@@ -62,7 +62,7 @@ const NewAccountModal: React.FC<TransactionModalProperties> = ({
         return;
       }
       newAccount.initialBalance = formData.initialBalance;
-      newAccount.balance = 0;
+      newAccount.balance = formData.initialBalance;
       newAccount.name = formData.accountName;
       newAccount.number = formData.accountNumber;
       newAccount.type = formData.accountType;

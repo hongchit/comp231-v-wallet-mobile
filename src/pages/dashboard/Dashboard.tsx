@@ -88,7 +88,7 @@ const Dashboard: React.FC = () => {
 
     fetchFinancialAccounts();
     fetchFinancialTransactions();
-  }, [userPresence, location.state]);
+  }, [userPresence, location.pathname]);
 
   const [isTransactionModalOpen, setIsTransactionModalOpen] = useState(false);
   const addTransactionClick = () => {

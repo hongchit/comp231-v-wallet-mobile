@@ -64,6 +64,7 @@ export const financialAccountApi = (userPresence: any) => {
         description: '',
       },
       initialBalance: account.initialBalance,
+      balance: account.balance,
     };
 
     let response = await fetch(`${restApiUrlBase}/${userProfileId}/account`, {
