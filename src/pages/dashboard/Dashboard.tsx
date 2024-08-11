@@ -22,7 +22,7 @@ import { FinancialAccount } from '../../models/financial-account.model';
 import { FinancialTransaction } from '../../models/financial-transaction.model';
 import { add } from 'ionicons/icons';
 import NewTransactionModal from '../finance/NewTransactionModal';
-import { useHistory } from 'react-router';
+import { useLocation, useHistory } from 'react-router';
 
 const Dashboard: React.FC = () => {
   const [userPresence] = useGlobalState('userPresence');
@@ -33,6 +33,7 @@ const Dashboard: React.FC = () => {
     FinancialTransaction[]
   >([]);
   const history = useHistory();
+  const location = useLocation();
 
   const fetchFinancialAccounts = async () => {
     try {
@@ -84,7 +85,7 @@ const Dashboard: React.FC = () => {
 
     fetchFinancialAccounts();
     fetchFinancialTransactions();
-  }, [userPresence]);
+  }, [userPresence, location.state]);
 
   const [isTransactionModalOpen, setIsTransactionModalOpen] = useState(false);
   const addTransactionClick = () => {
@@ -106,6 +107,9 @@ const Dashboard: React.FC = () => {
     };
     const service = dashboardService(userPresence);
     await service.createFinancialAccount(newAccount, undefined);
+    fetchFinancialAccounts();
+    fetchFinancialTransactions();
+
     // End of Testing code
   };
 

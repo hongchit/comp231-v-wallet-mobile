@@ -74,20 +74,15 @@ const FinancialAccount: React.FC = () => {
 
   const handleDeleteAccount = async () => {
     try {
-      // TODO: Use the financeService to delete the account
-      const response = await fetch(
-        `http://localhost:5241/api/Account/${accountInfo.accountNumber}`,
-        {
-          method: 'DELETE',
-        },
-      );
+      setShowAlert(false);
+      const abortController = new AbortController();
+      const signal = abortController.signal;
 
-      if (!response.ok) {
-        throw new Error('Failed to delete account');
-      }
+      const service = financeService(userPresence);
+      await service.deleteFinancialAccount(accountId, signal);
 
       // Handle successful deletion (e.g., redirect to another page)
-      history.push('/some-other-page');
+      history.push('/', { refresh: true }); // Trigger a refresh of account list on dashboard
     } catch (error) {
       console.error('Error deleting account:', error);
     }

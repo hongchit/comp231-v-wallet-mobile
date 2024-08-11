@@ -2,13 +2,17 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useGlobalState } from '../../global/global.state';
 import { financeService } from '../../services/finance.service';
 import { useHistory } from 'react-router-dom';
-import { IonButton, IonIcon, IonAlert } from '@ionic/react';
+import { IonButton, IonIcon, IonAlert, IonItem } from '@ionic/react';
 import { trashOutline } from 'ionicons/icons';
 import { FinancialAccount } from '../../models/financial-account.model';
+import { use } from 'chai';
+import { set } from 'lodash';
 
 interface DeleteAccountButtonProps {
   accountId: string;
   redirectURI: string;
+  showIcon: boolean;
+  label?: string;
 }
 
 const DeleteAccountButton: React.FC<DeleteAccountButtonProps> = (props) => {
@@ -16,13 +20,26 @@ const DeleteAccountButton: React.FC<DeleteAccountButtonProps> = (props) => {
   const [open, setOpen] = useState(false);
   const [redirect, setRedirect] = useState(false);
   const history = useHistory();
+  const deleteLabel = props.label || props.showIcon ? '' : 'Delete';
 
   const clickButton = () => {
     setOpen(true);
   };
 
+  useEffect(() => {
+    if (redirect) {
+      history.push(props.redirectURI);
+    }
+
+    return () => {
+      setOpen(false);
+    };
+  }, [redirect]);
+
   const handleDelete = async () => {
     try {
+      setOpen(false);
+
       const abortController = new AbortController();
       const signal = abortController.signal;
 
@@ -42,14 +59,11 @@ const DeleteAccountButton: React.FC<DeleteAccountButtonProps> = (props) => {
     setOpen(false);
   };
 
-  if (redirect) {
-    history.push(props.redirectURI);
-  }
-
   return (
-    <div>
+    <IonItem>
       <IonButton onClick={clickButton} color="danger">
-        <IonIcon slot="icon-only" icon={trashOutline} />
+        {props.showIcon && <IonIcon slot="icon-only" icon={trashOutline} />}
+        {deleteLabel && deleteLabel}
       </IonButton>
       <IonAlert
         isOpen={open}
@@ -70,7 +84,7 @@ const DeleteAccountButton: React.FC<DeleteAccountButtonProps> = (props) => {
           },
         ]}
       />
-    </div>
+    </IonItem>
   );
 };
 
