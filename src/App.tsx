@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   IonApp,
   IonRouterOutlet,
@@ -32,14 +32,14 @@ import authHelper from './helpers/auth.helper';
 import Dashboard from './pages/dashboard/Dashboard';
 import { setGlobalState, useGlobalState } from './global/global.state';
 import UpdateAccount from './pages/finance/UpdateAccount';
+import { PrivateRoute } from './components/PrivateRoute';
 
 setupIonicReact();
 
 const App: React.FC = () => {
-  const [idleTime, setIdleTime] = useState(0);
   const history = useHistory();
-
-  const [userPresence] = useGlobalState('userPresence');
+  const timerRef = useRef<NodeJS.Timeout | null>(null); // Use a ref to persist the timer across renders
+  const [userPresence, setUserPresence] = useGlobalState('userPresence');
 
   const initializeGlobalState = async () => {
     const userPresence = await authHelper.getAuthenticatedUser();
@@ -52,13 +52,23 @@ const App: React.FC = () => {
     initializeGlobalState();
 
     const maxIdleTime = 15 * 60 * 1000; // 15 minutes in milliseconds
-    let timer: NodeJS.Timeout;
 
+    // Idle timer function to logout user after a period of inactivity
     const resetIdleTimer = () => {
-      setIdleTime(0);
-      if (timer) clearTimeout(timer);
-      timer = setTimeout(() => {
-        history.push('/login');
+      if (timerRef.current) clearTimeout(timerRef.current);
+      timerRef.current = setTimeout(() => {
+        console.log('User has been inactive for too long. Logging out.');
+        authHelper.logoutUser();
+        setUserPresence({
+          token: '',
+          email: '',
+          name: '',
+          accountId: '',
+          profileId: '',
+        });
+        if (history) {
+          history.push('/login');
+        }
       }, maxIdleTime);
     };
 
@@ -83,7 +93,8 @@ const App: React.FC = () => {
       events.forEach((event) => {
         window.removeEventListener(event, resetIdleTimer);
       });
-      if (timer) clearTimeout(timer);
+      // if (timer) clearTimeout(timer);
+      if (timerRef.current) clearTimeout(timerRef.current);
     };
   }, [history]);
 
@@ -93,6 +104,7 @@ const App: React.FC = () => {
         <IonSplitPane contentId="main">
           {userPresence.token === '' ? null : <Menu />}
           <IonRouterOutlet id="main">
+            <Route path="/login" component={Login} exact={true} />
             <Route path="/" exact={true}>
               {userPresence && authHelper.isAuthenticated() ? (
                 <Page name="Dashboard">
@@ -102,14 +114,17 @@ const App: React.FC = () => {
                 <Login />
               )}
             </Route>
-            <Route path="/dashboard" component={Dashboard} exact={true} />
-            <Route
+            <PrivateRoute
+              path="/dashboard"
+              component={Dashboard}
+              exact={true}
+            />
+            <PrivateRoute
               path="/financial-account/:accountId/edit"
               component={UpdateAccount}
               exact={true}
             />
-            <Route path="/login" component={Login} exact={true} />
-            <Route
+            <PrivateRoute
               path="/financial-account/:accountId"
               component={FinancialAccount}
               exact
