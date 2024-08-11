@@ -18,12 +18,17 @@ import {
   IonCardSubtitle,
   IonCardContent,
   IonRouterLink,
+  IonButtons,
+  IonIcon,
 } from '@ionic/react';
+import { chevronBackOutline } from 'ionicons/icons';
 import { useHistory, useLocation, useParams } from 'react-router-dom';
 
 import { useGlobalState } from '../../global/global.state';
 import { FinancialTransaction } from '../../models/financial-transaction.model';
 import { financeService } from '../../services/finance.service';
+import AccountType from '../../models/AccountType';
+import Currency from '../../models/Currency';
 
 interface AccountInfo {
   accountId: string;
@@ -32,6 +37,7 @@ interface AccountInfo {
   initialBalance: number;
   currentBalance: number;
   accountType: string;
+  currency: string;
   transactions: FinancialTransaction[];
 }
 
@@ -46,7 +52,8 @@ const FinancialAccount: React.FC = () => {
     accountName: '',
     initialBalance: 0,
     currentBalance: 0,
-    accountType: '',
+    accountType: AccountType.CASH,
+    currency: Currency.CAD,
     transactions: [],
   });
   const [showAlert, setShowAlert] = useState(false);
@@ -54,6 +61,19 @@ const FinancialAccount: React.FC = () => {
 
   useEffect(() => {
     const loadFinancialData = async (accountId: string) => {
+      if (!userPresence || !userPresence.profileId || !accountId) {
+        setAccountInfo({
+          accountId: '',
+          accountNumber: '',
+          accountName: '',
+          initialBalance: 0,
+          currentBalance: 0,
+          accountType: AccountType.CASH,
+          currency: Currency.CAD,
+          transactions: [],
+        });
+        return;
+      }
       const financialAccount = await financeService(
         userPresence,
       ).getFinancialAccount(accountId);
@@ -67,7 +87,8 @@ const FinancialAccount: React.FC = () => {
         accountName: financialAccount?.name ?? '',
         initialBalance: financialAccount?.initialBalance ?? 0,
         currentBalance: financialAccount?.balance ?? 0,
-        accountType: financialAccount?.type ?? '',
+        accountType: financialAccount?.type ?? AccountType.CASH,
+        currency: financialAccount?.currency ?? Currency.CAD,
         transactions: financialTransactions,
       });
     };
@@ -92,6 +113,8 @@ const FinancialAccount: React.FC = () => {
   };
 
   const navigateToUpdateAccount = () => {
+    console.log('Nav: ', location.pathname);
+    console.log('AccountInfo: ', accountInfo);
     history.push({
       pathname: `/financial-account/${accountInfo.accountId}/edit`,
       state: { returnURI: location.pathname },
@@ -102,6 +125,13 @@ const FinancialAccount: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar>
+          <IonButtons slot="start">
+            <IonButton size="large">
+              <IonRouterLink href="/">
+                <IonIcon icon={chevronBackOutline}></IonIcon>
+              </IonRouterLink>
+            </IonButton>
+          </IonButtons>
           <IonTitle>Financial Account</IonTitle>
         </IonToolbar>
       </IonHeader>
@@ -119,6 +149,10 @@ const FinancialAccount: React.FC = () => {
                     <IonItem>
                       <IonLabel>Account Number</IonLabel>
                       <IonLabel>{accountInfo.accountNumber}</IonLabel>
+                    </IonItem>
+                    <IonItem>
+                      <IonLabel>Currency</IonLabel>
+                      <IonLabel>{accountInfo.currency}</IonLabel>
                     </IonItem>
                     <IonItem>
                       <IonLabel>Initial Balance</IonLabel>

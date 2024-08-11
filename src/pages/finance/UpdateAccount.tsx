@@ -21,11 +21,12 @@ import {
   IonHeader,
   IonRow,
   IonCol,
+  useIonAlert,
 } from '@ionic/react';
 import { FinancialAccount } from '../../models/financial-account.model';
 import AccountType from '../../models/AccountType';
 import Currency from '../../models/Currency';
-import { set } from 'lodash';
+import { set, trim } from 'lodash';
 import { use } from 'chai';
 
 interface FormData {
@@ -53,13 +54,23 @@ const UpdateAccount: React.FC = () => {
     accountType: AccountType.CASH,
     currency: Currency.CAD,
   });
+  const [presentAlert] = useIonAlert();
 
   useEffect(() => {
     // Get Return URI from location state
-    const r = (location.state as any).returnURI as string;
-    setReturnURI(r);
+    try {
+      const r = (location.state as any).returnURI as string;
+      setReturnURI(r);
+    } catch (error) {}
 
     if (!userPresence || !userPresence.profileId || !accountId) {
+      setFormData({
+        accountId: '',
+        accountNumber: '',
+        accountName: '',
+        accountType: AccountType.CASH,
+        currency: Currency.CAD,
+      });
       return;
     }
     const abortController = new AbortController();
@@ -89,7 +100,48 @@ const UpdateAccount: React.FC = () => {
     return () => {
       abortController.abort();
     };
-  }, [accountId, userPresence]);
+  }, [accountId, location.pathname, userPresence]);
+
+  const validateForm = (): boolean => {
+    // Check if account name is empty
+    if (
+      !validateMandatory(
+        'Account Name',
+        formData.accountName,
+        'Please enter a name for the account',
+      )
+    ) {
+      return false;
+    }
+    // Check if account number is empty
+    if (
+      !validateMandatory(
+        'Account Number',
+        formData.accountNumber,
+        'Please enter a number for the account',
+      )
+    ) {
+      return false;
+    }
+    return true;
+  };
+  const validateMandatory = (
+    fieldName: string,
+    value: string,
+    message: string,
+  ): boolean => {
+    console.log('Validating:', fieldName);
+    console.log('Value:', value);
+    if (!value || trim(value) === '') {
+      presentAlert({
+        header: `${fieldName} is required`,
+        message: message,
+        buttons: ['OK'],
+      });
+      return false;
+    }
+    return true;
+  };
 
   const handleUpdateAccount = async () => {
     const abortController = new AbortController();
@@ -99,14 +151,11 @@ const UpdateAccount: React.FC = () => {
       if (!account) {
         return;
       }
-      if (
-        !formData.accountName ||
-        !formData.accountType ||
-        !formData.currency
-      ) {
-        alert('Please fill in all required fields');
+      // Validate form data
+      if (!validateForm()) {
         return;
       }
+
       const toUpdate: FinancialAccount = {
         ...account,
         name: formData.accountName,
@@ -118,26 +167,23 @@ const UpdateAccount: React.FC = () => {
       await service.updateFinancialAccount(toUpdate, signal);
 
       navigateBack();
-
-      console.log('Success: returnURI:', returnURI);
     } catch (error) {
       abortController.abort();
       console.error('Failed to update account:', error);
-      alert('Failed to update account');
+      presentAlert({
+        header: 'Failed to update account',
+        message: (error as Error).message,
+        buttons: ['OK'],
+      });
     }
   };
 
   const navigateBack = () => {
-    console.log('Done. returnURI:', returnURI);
     if (returnURI) {
       history.push(returnURI);
     } else {
       history.goBack();
     }
-  };
-
-  const handleCancel = () => {
-    navigateBack();
   };
 
   return (
@@ -225,7 +271,7 @@ const UpdateAccount: React.FC = () => {
                 </IonButton>
               </IonCol>
               <IonCol className="ion-text-center">
-                <IonButton color="warning" onClick={handleCancel}>
+                <IonButton color="warning" onClick={navigateBack}>
                   Cancel
                 </IonButton>
               </IonCol>

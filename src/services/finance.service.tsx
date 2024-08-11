@@ -17,6 +17,7 @@ export const financeService = (userPresence: any) => {
     } catch (error) {
       console.log(error);
       return new FinancialAccount();
+      throw error;
     }
   };
 
@@ -32,6 +33,7 @@ export const financeService = (userPresence: any) => {
       );
     } catch (err) {
       console.log(err);
+      throw err;
     }
   };
 
@@ -47,6 +49,7 @@ export const financeService = (userPresence: any) => {
       );
     } catch (err) {
       console.log(err);
+      throw err;
     }
   };
 
