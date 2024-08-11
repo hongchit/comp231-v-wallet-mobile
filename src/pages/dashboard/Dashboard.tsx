@@ -17,12 +17,14 @@ import {
   IonFabButton,
   IonIcon,
   IonButton,
+  useIonAlert,
 } from '@ionic/react';
 import { FinancialAccount } from '../../models/financial-account.model';
 import { FinancialTransaction } from '../../models/financial-transaction.model';
 import { add } from 'ionicons/icons';
 import NewTransactionModal from '../finance/NewTransactionModal';
 import { useLocation, useHistory } from 'react-router';
+import NewAccountModal from '../finance/NewAccountModal';
 
 const Dashboard: React.FC = () => {
   const [userPresence] = useGlobalState('userPresence');
@@ -34,6 +36,7 @@ const Dashboard: React.FC = () => {
   >([]);
   const history = useHistory();
   const location = useLocation();
+  const [presentAlert] = useIonAlert();
 
   const fetchFinancialAccounts = async () => {
     try {
@@ -92,7 +95,11 @@ const Dashboard: React.FC = () => {
     setIsTransactionModalOpen(true);
   };
 
+  const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
+
   const addAccountClick = async () => {
+    setIsAccountModalOpen(true);
+    return;
     //add the logic to add financial account here
 
     // Testing code to create a new account, to be removed after implementing create account UI
@@ -105,12 +112,32 @@ const Dashboard: React.FC = () => {
       balance: 0,
       currency: 'CAD',
     };
-    const service = dashboardService(userPresence);
-    await service.createFinancialAccount(newAccount, undefined);
-    fetchFinancialAccounts();
-    fetchFinancialTransactions();
 
     // End of Testing code
+  };
+
+  const createNewAccount = async (newAccount: FinancialAccount) => {
+    const abortController = new AbortController();
+    const signal = abortController.signal;
+    const service = dashboardService(userPresence);
+    try {
+      newAccount.initialBalance = 0;
+      newAccount.balance = 0;
+
+      console.log('Updating account:', newAccount);
+
+      await service.createFinancialAccount(newAccount, signal);
+      await fetchFinancialAccounts();
+      await fetchFinancialTransactions();
+    } catch (error) {
+      abortController.abort();
+      console.error('Failed to create account:', error);
+      presentAlert({
+        header: 'Failed to update account',
+        message: (error as Error).message,
+        buttons: ['OK'],
+      });
+    }
   };
 
   const getAccountDetails = (accountId: string) => {
@@ -193,6 +220,16 @@ const Dashboard: React.FC = () => {
             <IonIcon icon={add}></IonIcon>
           </IonFabButton>
         </IonFab>
+        <NewAccountModal
+          isOpen={isAccountModalOpen}
+          onClose={(newAccount, isConfirm) => {
+            setIsAccountModalOpen(false);
+            if (isConfirm) {
+              createNewAccount(newAccount);
+              return;
+            }
+          }}
+        />
         <NewTransactionModal
           isOpen={isTransactionModalOpen}
           accounts={financialAccountData}

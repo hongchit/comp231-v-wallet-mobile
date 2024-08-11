@@ -4,19 +4,13 @@ import { financeService } from '../../services/finance.service';
 import { useHistory, useLocation, useParams } from 'react-router-dom';
 import {
   IonButton,
-  IonIcon,
-  IonAlert,
   IonContent,
   IonPage,
   IonInput,
   IonTitle,
-  IonRadioGroup,
-  IonRadio,
-  IonLabel,
   IonItem,
   IonSelect,
   IonSelectOption,
-  IonButtons,
   IonToolbar,
   IonHeader,
   IonRow,
@@ -26,8 +20,7 @@ import {
 import { FinancialAccount } from '../../models/financial-account.model';
 import AccountType from '../../models/AccountType';
 import Currency from '../../models/Currency';
-import { set, trim } from 'lodash';
-import { use } from 'chai';
+import { trim } from 'lodash';
 
 interface FormData {
   accountId: string;
@@ -130,8 +123,6 @@ const UpdateAccount: React.FC = () => {
     value: string,
     message: string,
   ): boolean => {
-    console.log('Validating:', fieldName);
-    console.log('Value:', value);
     if (!value || trim(value) === '') {
       presentAlert({
         header: `${fieldName} is required`,
@@ -193,11 +184,14 @@ const UpdateAccount: React.FC = () => {
           <IonTitle>Update Account {account?.name}</IonTitle>
         </IonToolbar>
       </IonHeader>
-      <IonContent>
+      <IonContent className="ion-padding">
         {account && (
-          <form onSubmit={handleUpdateAccount}>
+          <>
             <IonItem>
               <IonInput
+                label="Enter Account Name"
+                labelPlacement="stacked"
+                type="text"
                 value={formData.accountName}
                 placeholder="Account Name"
                 onIonChange={(e) =>
@@ -210,6 +204,9 @@ const UpdateAccount: React.FC = () => {
             </IonItem>
             <IonItem>
               <IonInput
+                label="Enter Account Number"
+                labelPlacement="stacked"
+                type="text"
                 value={formData.accountNumber}
                 placeholder="Account Number"
                 onIonChange={(e) =>
@@ -223,6 +220,7 @@ const UpdateAccount: React.FC = () => {
             <IonItem>
               <IonSelect
                 label="Account Type"
+                labelPlacement="floating"
                 value={formData.accountType}
                 onIonChange={(e) =>
                   setFormData({
@@ -276,7 +274,7 @@ const UpdateAccount: React.FC = () => {
                 </IonButton>
               </IonCol>
             </IonRow>
-          </form>
+          </>
         )}
       </IonContent>
     </IonPage>
