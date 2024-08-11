@@ -17,8 +17,9 @@ import {
   IonCardTitle,
   IonCardSubtitle,
   IonCardContent,
+  IonRouterLink,
 } from '@ionic/react';
-import { useHistory, useParams } from 'react-router-dom';
+import { useHistory, useLocation, useParams } from 'react-router-dom';
 
 import { useGlobalState } from '../../global/global.state';
 import { FinancialTransaction } from '../../models/financial-transaction.model';
@@ -37,6 +38,8 @@ interface AccountInfo {
 const FinancialAccount: React.FC = () => {
   const { accountId } = useParams<{ accountId: string }>();
   const [userPresence] = useGlobalState('userPresence');
+  const location = useLocation();
+
   const [accountInfo, setAccountInfo] = useState<AccountInfo>({
     accountId: '',
     accountNumber: '',
@@ -57,7 +60,7 @@ const FinancialAccount: React.FC = () => {
       const financialTransactions = await financeService(
         userPresence,
       ).getFinancialTransactionsByAccount(accountId);
-      debugger;
+      // debugger;
       setAccountInfo({
         accountId: financialAccount?.id ?? '',
         accountNumber: financialAccount?.number ?? '',
@@ -70,7 +73,7 @@ const FinancialAccount: React.FC = () => {
     };
 
     loadFinancialData(accountId);
-  }, [accountId]);
+  }, [accountId, location.pathname, userPresence]);
 
   const handleDeleteAccount = async () => {
     try {
@@ -82,10 +85,17 @@ const FinancialAccount: React.FC = () => {
       await service.deleteFinancialAccount(accountId, signal);
 
       // Handle successful deletion (e.g., redirect to another page)
-      history.push('/', { refresh: true }); // Trigger a refresh of account list on dashboard
+      history.push('/');
     } catch (error) {
       console.error('Error deleting account:', error);
     }
+  };
+
+  const navigateToUpdateAccount = () => {
+    history.push({
+      pathname: `/financial-account/${accountInfo.accountId}/edit`,
+      state: { returnURI: location.pathname },
+    });
   };
 
   return (
@@ -158,7 +168,12 @@ const FinancialAccount: React.FC = () => {
           </IonCol>
         </IonRow>
         <IonRow>
-          <IonCol>
+          <IonCol className="ion-text-center">
+            <IonButton onClick={navigateToUpdateAccount}>
+              Update Account
+            </IonButton>
+          </IonCol>
+          <IonCol className="ion-text-center">
             <IonButton color="danger" onClick={() => setShowAlert(true)}>
               Delete Account
             </IonButton>

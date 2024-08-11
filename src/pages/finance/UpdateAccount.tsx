@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useGlobalState } from '../../global/global.state';
 import { financeService } from '../../services/finance.service';
-import { useHistory, useParams } from 'react-router-dom';
+import { useHistory, useLocation, useParams } from 'react-router-dom';
 import {
   IonButton,
   IonIcon,
@@ -17,27 +17,51 @@ import {
   IonSelect,
   IonSelectOption,
   IonButtons,
+  IonToolbar,
+  IonHeader,
+  IonRow,
+  IonCol,
 } from '@ionic/react';
 import { FinancialAccount } from '../../models/financial-account.model';
 import AccountType from '../../models/AccountType';
 import Currency from '../../models/Currency';
+import { set } from 'lodash';
+import { use } from 'chai';
+
+interface FormData {
+  accountId: string;
+  accountNumber: string;
+  accountName: string;
+  accountType: string;
+  currency: string;
+}
 
 const UpdateAccount: React.FC = () => {
+  const location = useLocation();
   const { accountId } = useParams<{ accountId: string }>();
-  const { returnURI } = useParams<{ returnURI: string }>();
 
+  const history = useHistory();
   const [userPresence] = useGlobalState('userPresence');
+  const [returnURI, setReturnURI] = useState<string>('');
   const [account, setAccount] = useState<FinancialAccount>(
     new FinancialAccount(),
   );
-  const history = useHistory();
-  const [accountName, setAccountName] = useState('');
-  const [accountNumber, setAccountNumber] = useState('');
-  const [balance, setBalance] = useState(0);
-  const [accountType, setAccountType] = useState<AccountType>(AccountType.CASH);
-  const [currency, setCurrency] = useState<Currency>(Currency.CAD);
+  const [formData, setFormData] = useState<FormData>({
+    accountId: '',
+    accountNumber: '',
+    accountName: '',
+    accountType: AccountType.CASH,
+    currency: Currency.CAD,
+  });
 
   useEffect(() => {
+    // Get Return URI from location state
+    const r = (location.state as any).returnURI as string;
+    setReturnURI(r);
+
+    if (!userPresence || !userPresence.profileId || !accountId) {
+      return;
+    }
     const abortController = new AbortController();
     const signal = abortController.signal;
     const service = financeService(userPresence);
@@ -49,11 +73,13 @@ const UpdateAccount: React.FC = () => {
           signal,
         );
         setAccount(fetchedAccount ?? new FinancialAccount());
-        setAccountName(fetchedAccount?.name ?? '');
-        setAccountNumber(fetchedAccount?.number ?? '');
-        setBalance(fetchedAccount?.balance ?? 0);
-        setAccountType(AccountType.parse(fetchedAccount?.type ?? ''));
-        setCurrency(Currency.parse(fetchedAccount?.currency ?? ''));
+        setFormData({
+          accountId: fetchedAccount?.id ?? '',
+          accountNumber: fetchedAccount?.number ?? '',
+          accountName: fetchedAccount?.name ?? '',
+          accountType: fetchedAccount?.type ?? AccountType.CASH,
+          currency: fetchedAccount?.currency ?? Currency.CAD,
+        });
       } catch (error) {
         console.error('Failed to fetch account:', error);
       }
@@ -73,23 +99,27 @@ const UpdateAccount: React.FC = () => {
       if (!account) {
         return;
       }
-      if (!accountName || !accountType || !currency) {
+      if (
+        !formData.accountName ||
+        !formData.accountType ||
+        !formData.currency
+      ) {
         alert('Please fill in all required fields');
         return;
       }
-      const updatedAccount: FinancialAccount = {
-        id: accountId,
-        name: accountName,
-        number: accountNumber,
-        initialBalance: account.initialBalance,
-        balance: balance,
-        type: accountType,
-        currency: currency,
+      const toUpdate: FinancialAccount = {
+        ...account,
+        name: formData.accountName,
+        number: formData.accountNumber,
+        type: formData.accountType,
+        currency: formData.currency,
       };
+      console.log('Updating account:', toUpdate);
+      await service.updateFinancialAccount(toUpdate, signal);
 
-      await service.updateFinancialAccount(updatedAccount, signal);
+      navigateBack();
 
-      history.push(returnURI);
+      console.log('Success: returnURI:', returnURI);
     } catch (error) {
       abortController.abort();
       console.error('Failed to update account:', error);
@@ -97,36 +127,62 @@ const UpdateAccount: React.FC = () => {
     }
   };
 
+  const navigateBack = () => {
+    console.log('Done. returnURI:', returnURI);
+    if (returnURI) {
+      history.push(returnURI);
+    } else {
+      history.goBack();
+    }
+  };
+
   const handleCancel = () => {
-    history.goBack();
+    navigateBack();
   };
 
   return (
     <IonPage>
+      <IonHeader>
+        <IonToolbar>
+          <IonTitle>Update Account {account?.name}</IonTitle>
+        </IonToolbar>
+      </IonHeader>
       <IonContent>
-        <IonTitle>Update Account {account?.name}</IonTitle>
         {account && (
           <form onSubmit={handleUpdateAccount}>
             <IonItem>
               <IonInput
-                value={accountName}
+                value={formData.accountName}
                 placeholder="Account Name"
-                onIonChange={(e) => setAccountName(e.detail.value!)}
+                onIonChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    accountName: e.detail.value ?? '',
+                  })
+                }
               ></IonInput>
             </IonItem>
             <IonItem>
               <IonInput
-                value={accountNumber}
+                value={formData.accountNumber}
                 placeholder="Account Number"
-                onIonChange={(e) => setAccountName(e.detail.value!)}
+                onIonChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    accountNumber: e.detail.value ?? '',
+                  })
+                }
               ></IonInput>
             </IonItem>
             <IonItem>
               <IonSelect
                 label="Account Type"
-                value={accountType}
+                value={formData.accountType}
                 onIonChange={(e) =>
-                  setAccountType(e.detail.value as AccountType)
+                  setFormData({
+                    ...formData,
+                    accountType: e.detail.value as AccountType,
+                  })
                 }
               >
                 {Object.values(AccountType)
@@ -142,7 +198,13 @@ const UpdateAccount: React.FC = () => {
               <IonSelect
                 label="Currency"
                 labelPlacement="floating"
-                onIonChange={(e) => setCurrency(e.detail.value)}
+                value={formData.currency}
+                onIonChange={(e) =>
+                  setFormData({
+                    ...formData,
+                    currency: e.detail.value,
+                  })
+                }
               >
                 {Object.values(Currency)
                   .filter((value) => typeof value === 'string')
@@ -156,12 +218,18 @@ const UpdateAccount: React.FC = () => {
                   ))}
               </IonSelect>
             </IonItem>
-            <IonButtons>
-              <IonButton type="submit">Update Account</IonButton>
-              <IonButton type="button" onClick={handleCancel}>
-                Cancel
-              </IonButton>
-            </IonButtons>
+            <IonRow>
+              <IonCol className="ion-text-center">
+                <IonButton color="primary" onClick={handleUpdateAccount}>
+                  Update Account
+                </IonButton>
+              </IonCol>
+              <IonCol className="ion-text-center">
+                <IonButton color="warning" onClick={handleCancel}>
+                  Cancel
+                </IonButton>
+              </IonCol>
+            </IonRow>
           </form>
         )}
       </IonContent>

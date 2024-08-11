@@ -121,8 +121,6 @@ export const financialAccountApi = (userPresence: any) => {
     if (!response.ok) {
       throw new Error(await response.text());
     }
-
-    return await response.json();
   };
 
   const deleteAccount = async (
@@ -153,8 +151,6 @@ export const financialAccountApi = (userPresence: any) => {
     if (!response.ok) {
       throw new Error(await response.text());
     }
-
-    return await response.json();
   };
 
   const getFinancialTransactions = async (userProfileId: string) => {
