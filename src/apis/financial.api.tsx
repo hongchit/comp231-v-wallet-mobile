@@ -24,16 +24,13 @@ export const financialAccountApi = (userPresence: any) => {
   };
 
   const getAccount = async (accountId: string, signal?: AbortSignal) => {
-    let response = await fetch(
-      `${restApiUrlBase}/${userPresence.profileId}/account/${accountId}`,
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `${userPresence.token}`,
-        },
+    let response = await fetch(`${restApiUrlBase}/account/${accountId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `${userPresence.token}`,
       },
-    );
+    });
 
     if (!response.ok) {
       throw new Error(await response.text());
@@ -42,14 +39,7 @@ export const financialAccountApi = (userPresence: any) => {
     return await response.json();
   };
 
-  const createAccount = async (
-    userProfileId: string,
-    account: any,
-    signal?: AbortSignal,
-  ) => {
-    if (!userProfileId) {
-      throw new Error('User Profile Id is required');
-    }
+  const createAccount = async (account: any, signal?: AbortSignal) => {
     if (!account) {
       throw new Error('Account is required');
     }
@@ -67,12 +57,13 @@ export const financialAccountApi = (userPresence: any) => {
       balance: account.balance,
     };
 
-    let response = await fetch(`${restApiUrlBase}/${userProfileId}/account`, {
+    let response = await fetch(`${restApiUrlBase}/account`, {
       method: 'POST',
       headers: {
         Accept: 'application/json',
         'Content-Type': 'application/json',
         Authorization: `${userPresence.token}`,
+        UserProfileId: `${userPresence.profileId}`,
       },
       signal: signal,
       body: JSON.stringify(newAccount),

@@ -20,11 +20,7 @@ export const dashboardService = (userPresence: any) => {
     singal?: AbortSignal,
   ) => {
     try {
-      await financialAccountApi(userPresence).createAccount(
-        userPresence.profileId,
-        account,
-        singal,
-      );
+      await financialAccountApi(userPresence).createAccount(account, singal);
     } catch (err) {
       console.log(err);
     }

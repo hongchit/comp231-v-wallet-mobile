@@ -80,7 +80,7 @@ const FinancialAccount: React.FC = () => {
       const financialTransactions = await financeService(
         userPresence,
       ).getFinancialTransactionsByAccount(accountId);
-      // debugger;
+
       setAccountInfo({
         accountId: financialAccount?.id ?? '',
         accountNumber: financialAccount?.number ?? '',
