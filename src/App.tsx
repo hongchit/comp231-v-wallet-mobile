@@ -48,6 +48,7 @@ const App: React.FC = () => {
     }
   };
 
+  // Initialize global state and set up idle timer to detect user inactivity
   useEffect(() => {
     initializeGlobalState();
 

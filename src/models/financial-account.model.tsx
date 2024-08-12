@@ -1,3 +1,4 @@
+// FinancialAccount model for the financial account data
 export class FinancialAccount {
   id: string;
   name: string;

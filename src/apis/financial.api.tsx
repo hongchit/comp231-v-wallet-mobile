@@ -1,9 +1,11 @@
 import { use } from 'chai';
 import { config } from '../config/config';
 
+// APIs calls for financial accounts and transactions handling
 export const financialAccountApi = (userPresence: any) => {
   let restApiUrlBase = config.restApiBase + '/finance';
 
+  // Retrieve all accounts
   const getAccounts = async () => {
     let response = await fetch(
       `${restApiUrlBase}/${userPresence.profileId}/account`,
@@ -23,6 +25,7 @@ export const financialAccountApi = (userPresence: any) => {
     return await response.json();
   };
 
+  // Retrieve a specific account
   const getAccount = async (accountId: string, signal?: AbortSignal) => {
     let response = await fetch(`${restApiUrlBase}/account/${accountId}`, {
       method: 'GET',
@@ -39,6 +42,7 @@ export const financialAccountApi = (userPresence: any) => {
     return await response.json();
   };
 
+  // Create a new account
   const createAccount = async (account: any, signal?: AbortSignal) => {
     if (!account) {
       throw new Error('Account is required');
@@ -76,6 +80,7 @@ export const financialAccountApi = (userPresence: any) => {
     return await response.json();
   };
 
+  // Update an account
   const updateAccount = async (
     userProfileId: string,
     account: any,
@@ -118,6 +123,7 @@ export const financialAccountApi = (userPresence: any) => {
     }
   };
 
+  // Delete an account
   const deleteAccount = async (accountId: string, signal?: AbortSignal) => {
     if (!accountId) {
       throw new Error('Account Id is required');
@@ -138,6 +144,7 @@ export const financialAccountApi = (userPresence: any) => {
     }
   };
 
+  // Retrieve all transactions for a specific user
   const getFinancialTransactions = async (userProfileId: string) => {
     let response = await fetch(
       `${restApiUrlBase}/${userProfileId}/transaction`,
@@ -157,6 +164,7 @@ export const financialAccountApi = (userPresence: any) => {
     return await response.json();
   };
 
+  // Create a new transaction
   const createTransaction = async (transaction: any) => {
     var newTransaction = {
       id: '',
@@ -185,6 +193,7 @@ export const financialAccountApi = (userPresence: any) => {
     return await response.json();
   };
 
+  // Retrieve all transactions for a specific account
   const getFinancialTransactionsByAccountId = async (accountId: string) => {
     let response = await fetch(`${restApiUrlBase}/${accountId}/transactions`, {
       method: 'GET',

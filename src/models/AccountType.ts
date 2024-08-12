@@ -7,6 +7,7 @@ enum AccountType {
 }
 
 namespace AccountType {
+  // Helper function to parse a string value to a AccountType enum
   export function parse(value: string): AccountType {
     return (Object.values(AccountType) as string[]).includes(value)
       ? (value as AccountType)

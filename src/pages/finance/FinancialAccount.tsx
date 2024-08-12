@@ -94,7 +94,7 @@ const FinancialAccount: React.FC = () => {
     };
 
     loadFinancialData(accountId);
-  }, [accountId, location.pathname, userPresence]);
+  }, [accountId, location.state, userPresence]);
 
   const handleDeleteAccount = async () => {
     try {
@@ -106,7 +106,10 @@ const FinancialAccount: React.FC = () => {
       await service.deleteFinancialAccount(accountId, signal);
 
       // Handle successful deletion (e.g., redirect to another page)
-      history.push('/');
+      history.push({
+        pathname: '/',
+        state: { lastChange: new Date().toString() },
+      });
     } catch (error) {
       console.error('Error deleting account:', error);
     }

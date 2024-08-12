@@ -1,6 +1,6 @@
 # hongchit-comp231-v-wallet-mobile
-COMP231 Group 6
 
+COMP231 Group 6
 
 ## Environment Setup
 
@@ -16,10 +16,14 @@ The Ionic CLI is the command-line interface for Ionic. To install it, open your 
 
 > _npm install -g @ionic/cli_
 
-### Step 2: Run the app in the browser
+### Step 2: Configure backend API endpoint
+
+Modify the config file at [src/config/config.tsx](./src/config/config.tsx) and update the backend API IP address, if it is not running on localhost.
+
+### Step 3: Run the app in the browser
+
 > _ionic serve_
 
-
-
 ## Ionic documentation
+
 [UI Components](https://ionicframework.com/docs/components)

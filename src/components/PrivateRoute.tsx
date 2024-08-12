@@ -4,17 +4,20 @@ import { logIn } from 'ionicons/icons';
 import { IonButton, IonContent, IonIcon } from '@ionic/react';
 import { useEffect, useState } from 'react';
 
+// PrivateRoute component, responsible for handling routes that require authentication.
 export const PrivateRoute = (props: any) => {
   const history = useHistory();
   const location = useLocation();
   const [userPresence] = useGlobalState('userPresence');
   const [content, setContent] = useState<JSX.Element | null>(null);
 
+  // Redner content based on user presence.
   useEffect(() => {
     if (
       location.pathname != '/login' &&
       (!userPresence || !userPresence.profileId)
     ) {
+      // User is not authenticated. Show session expired.
       console.log(
         'PrivateRoute: User is not authenticated. Redirecting to login page.',
       );
@@ -33,9 +36,10 @@ export const PrivateRoute = (props: any) => {
         </IonContent>,
       );
     } else {
+      // User is authenticated. Show the acutal route content.
       setContent(<Route {...props} />);
     }
-  }, [userPresence, location.pathname]);
+  }, [userPresence, userPresence?.token, location.state, location.pathname]);
 
   return content;
 };

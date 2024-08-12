@@ -172,14 +172,16 @@ const NewAccountModal: React.FC<TransactionModalProperties> = ({
                 })
               }
             >
-              {Object.values(AccountType).map((accountType) => (
-                <IonSelectOption
-                  key={accountType.toString()}
-                  value={accountType.toString()}
-                >
-                  {accountType.toString()}
-                </IonSelectOption>
-              ))}
+              {Object.values(AccountType)
+                .filter((value) => typeof value === 'string')
+                .map((accountType) => (
+                  <IonSelectOption
+                    key={accountType.toString()}
+                    value={accountType.toString()}
+                  >
+                    {accountType.toString()}
+                  </IonSelectOption>
+                ))}
             </IonSelect>
           </IonItem>
           <IonItem>

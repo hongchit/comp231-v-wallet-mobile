@@ -30,6 +30,9 @@ interface FormData {
   currency: string;
 }
 
+/**
+ * UpdateAccount component, responsible for updating a financial account.
+ */
 const UpdateAccount: React.FC = () => {
   const location = useLocation();
   const { accountId } = useParams<{ accountId: string }>();
@@ -49,6 +52,7 @@ const UpdateAccount: React.FC = () => {
   });
   const [presentAlert] = useIonAlert();
 
+  // Fetch account data
   useEffect(() => {
     // Get Return URI from location state
     try {
@@ -95,6 +99,7 @@ const UpdateAccount: React.FC = () => {
     };
   }, [accountId, location.pathname, userPresence]);
 
+  // Validate form data
   const validateForm = (): boolean => {
     // Check if account name is empty
     if (
@@ -134,6 +139,7 @@ const UpdateAccount: React.FC = () => {
     return true;
   };
 
+  // Update account
   const handleUpdateAccount = async () => {
     const abortController = new AbortController();
     const signal = abortController.signal;
@@ -147,6 +153,7 @@ const UpdateAccount: React.FC = () => {
         return;
       }
 
+      // Convert form data to account object
       const toUpdate: FinancialAccount = {
         ...account,
         name: formData.accountName,
@@ -169,9 +176,13 @@ const UpdateAccount: React.FC = () => {
     }
   };
 
+  // Finished updating account, navigate back
   const navigateBack = () => {
     if (returnURI) {
-      history.push(returnURI);
+      history.push({
+        pathname: returnURI,
+        state: { lastChange: new Date().toString() },
+      });
     } else {
       history.goBack();
     }

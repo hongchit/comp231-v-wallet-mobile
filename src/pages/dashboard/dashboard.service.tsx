@@ -15,6 +15,7 @@ export const dashboardService = (userPresence: any) => {
     }
   };
 
+  // Create a new financial account
   const createFinancialAccount = async (
     account: FinancialAccount,
     singal?: AbortSignal,

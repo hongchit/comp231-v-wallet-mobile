@@ -81,6 +81,7 @@ const Dashboard: React.FC = () => {
     }
   };
 
+  // Fetch the financial accounts and transactions upon page load and when the user presence changes
   useEffect(() => {
     if (userPresence.token === '') {
       return;
@@ -88,7 +89,7 @@ const Dashboard: React.FC = () => {
 
     fetchFinancialAccounts();
     fetchFinancialTransactions();
-  }, [userPresence, location.pathname]);
+  }, [userPresence, location.state]);
 
   const [isTransactionModalOpen, setIsTransactionModalOpen] = useState(false);
   const addTransactionClick = () => {
@@ -97,11 +98,13 @@ const Dashboard: React.FC = () => {
 
   const [isAccountModalOpen, setIsAccountModalOpen] = useState(false);
 
+  // Open the modal to add a new account
   const addAccountClick = async () => {
     setIsAccountModalOpen(true);
     return;
   };
 
+  // Perform the creation of a new account via the service
   const createNewAccount = async (newAccount: FinancialAccount) => {
     const abortController = new AbortController();
     const signal = abortController.signal;
