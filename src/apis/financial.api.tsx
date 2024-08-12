@@ -127,30 +127,20 @@ export const financialAccountApi = (userPresence: any) => {
     }
   };
 
-  const deleteAccount = async (
-    userProfileId: string,
-    accountId: string,
-    signal?: AbortSignal,
-  ) => {
-    if (!userProfileId) {
-      throw new Error('User Profile Id is required');
-    }
+  const deleteAccount = async (accountId: string, signal?: AbortSignal) => {
     if (!accountId) {
       throw new Error('Account Id is required');
     }
 
-    let response = await fetch(
-      `${restApiUrlBase}/${userProfileId}/account/${accountId}`,
-      {
-        method: 'DELETE',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
-          Authorization: `${userPresence.token}`,
-        },
-        signal: signal,
+    let response = await fetch(`${restApiUrlBase}/account/${accountId}`, {
+      method: 'DELETE',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: `${userPresence.token}`,
       },
-    );
+      signal: signal,
+    });
 
     if (!response.ok) {
       throw new Error(await response.text());

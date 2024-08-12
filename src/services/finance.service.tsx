@@ -42,11 +42,7 @@ export const financeService = (userPresence: any) => {
     singal?: AbortSignal,
   ) => {
     try {
-      await financialAccountApi(userPresence).deleteAccount(
-        userPresence.profileId,
-        accountId,
-        singal,
-      );
+      await financialAccountApi(userPresence).deleteAccount(accountId, singal);
     } catch (err) {
       console.log(err);
       throw err;
